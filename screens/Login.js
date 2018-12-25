@@ -5,7 +5,8 @@ import {
   Text,
   View,
   Dimensions,
-  ImageBackground
+  ImageBackground,
+  Platform
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Input, Button } from "react-native-elements";
@@ -26,14 +27,35 @@ export default class Login extends React.Component {
       password: "",
       username_valid: true,
       login_failed: false,
-      showLoading: false
+      showLoading: false,
+      platform: Platform.OS,
+      app_version: Platform.Version,
+      device_info: Expo.Constants.deviceName,
+      device_uuid: Expo.Constants.installationId
     };
   }
 
   handleSubmit = event => {
+    const {
+      showLoading,
+      platform,
+      app_version,
+      device_info,
+      device_uuid
+    } = this.state;
+
+    this.setState({
+      showLoading: !showLoading
+    });
     const data = JSON.stringify({
       username: "driver1",
-      password: "3618462"
+      password: "3618462",
+      info: {
+        platform: platform,
+        app_version: app_version,
+        device_info: device_info,
+        device_uuid: device_uuid
+      }
     });
     const url = "https://api.delivera.uz/drivers/login";
 
@@ -64,7 +86,7 @@ export default class Login extends React.Component {
         }
       })
       .catch(function(error) {
-        console.log(error);
+        console.log(error.response);
       });
     event.preventDefault();
   };
@@ -74,14 +96,6 @@ export default class Login extends React.Component {
       robotoregular: require("../assets/fonts/Roboto-Regular.ttf")
     });
     this.setState({ fontLoaded: true });
-  }
-
-  submitLoginCredentials() {
-    const { showLoading } = this.state;
-
-    this.setState({
-      showLoading: !showLoading
-    });
   }
 
   render() {

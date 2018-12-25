@@ -1,10 +1,64 @@
 import React from "react";
-import { AsyncStorage, Text, View, Button } from "react-native";
+import moment from "moment";
+import {
+  AsyncStorage,
+  View,
+  ScrollView,
+  StyleSheet,
+  Image,
+  ListView
+} from "react-native";
+
 import axios from "axios";
+import HomeLists from "./subscreens/HomeLists";
+
+const list2 = [
+  {
+    name: "Amy Farha",
+    avatar_url:
+      "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
+    subtitle: "Vice President",
+    linearGradientColors: ["#FF9800", "#F44336"]
+  },
+  {
+    name: "Chris Jackson",
+    avatar_url:
+      "https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg",
+    subtitle: "Vice Chairman",
+    linearGradientColors: ["#3F51B5", "#2196F3"]
+  },
+  {
+    name: "Amanda Martin",
+    avatar_url: "https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg",
+    subtitle: "CEO",
+    linearGradientColors: ["#FFD600", "#FF9800"]
+  },
+  {
+    name: "Christy Thomas",
+    avatar_url:
+      "https://s3.amazonaws.com/uifaces/faces/twitter/kfriedson/128.jpg",
+    subtitle: "Lead Developer",
+    linearGradientColors: ["#4CAF50", "#8BC34A"]
+  },
+  {
+    name: "Melissa Jones",
+    avatar_url:
+      "https://s3.amazonaws.com/uifaces/faces/twitter/nuraika/128.jpg",
+    subtitle: "CTO",
+    linearGradientColors: ["#F44336", "#E91E63"]
+  }
+];
+
 class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      orders: []
+    };
+  }
   async componentDidMount() {
     let token = await AsyncStorage.getItem("access_token");
-    const url = "https://api.delivera.uz/drivers/test";
+    const url = "https://api.delivera.uz/drivers/orders";
     axios({
       method: "get",
       url: url,
@@ -14,30 +68,60 @@ class Home extends React.Component {
       },
       headers: {
         "content-type": "application/json",
-        Accept: "application/json, text/plain, */*"
+        token: token
       }
     })
       .then(response => {
-        console.log(response, "resp");
+        this.setState({
+          orders: response.data.orders
+        });
+        console.log(typeof response.data.orders[0].period);
+        console.log(moment(response.data.orders[0].updated_at));
+        console.log(
+          moment(response.data.orders[0].updated_at).add(20, "minutes")
+        );
+        console.log(
+          moment(response.data.orders[0].updated_at).subtract(20, "minutes")
+        );
+        let now = moment();
+        console.log(now);
       })
       .catch(error => {
         console.log(error.response, "error");
       });
   }
+
+  handlePress = () => console.log("this is an example method");
   render() {
-    setTimeout(async () => {
-      console.log(await AsyncStorage.getItem("access_token"), "token");
-    }, 2000);
+    console.log(this.state.orders);
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text>Home!</Text>
-        <Button
-          title="Go to Details"
-          onPress={() => this.props.navigation.navigate("Login")}
-        />
-      </View>
+      <ScrollView>
+        <View style={styles.list}>
+          {this.state.orders.map((l, i) => (
+            <HomeLists
+              key={i}
+              updated_at={l.updated_at}
+              entity_name={l.entity.name}
+              id={l.id}
+              period={l.period}
+            />
+          ))}
+        </View>
+      </ScrollView>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  list: {
+    marginTop: 20,
+    borderTopWidth: 1,
+    borderColor: "#FD6B78",
+    backgroundColor: "#fff"
+  }
+});
 
 export default Home;
