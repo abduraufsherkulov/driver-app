@@ -10,44 +10,7 @@ import {
 } from "react-native";
 
 import axios from "axios";
-import HomeLists from "./subscreens/HomeLists";
-
-const list2 = [
-  {
-    name: "Amy Farha",
-    avatar_url:
-      "https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg",
-    subtitle: "Vice President",
-    linearGradientColors: ["#FF9800", "#F44336"]
-  },
-  {
-    name: "Chris Jackson",
-    avatar_url:
-      "https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg",
-    subtitle: "Vice Chairman",
-    linearGradientColors: ["#3F51B5", "#2196F3"]
-  },
-  {
-    name: "Amanda Martin",
-    avatar_url: "https://s3.amazonaws.com/uifaces/faces/twitter/brynn/128.jpg",
-    subtitle: "CEO",
-    linearGradientColors: ["#FFD600", "#FF9800"]
-  },
-  {
-    name: "Christy Thomas",
-    avatar_url:
-      "https://s3.amazonaws.com/uifaces/faces/twitter/kfriedson/128.jpg",
-    subtitle: "Lead Developer",
-    linearGradientColors: ["#4CAF50", "#8BC34A"]
-  },
-  {
-    name: "Melissa Jones",
-    avatar_url:
-      "https://s3.amazonaws.com/uifaces/faces/twitter/nuraika/128.jpg",
-    subtitle: "CTO",
-    linearGradientColors: ["#F44336", "#E91E63"]
-  }
-];
+import HomeLists from "./subscreens/newOrders/HomeLists";
 
 class Home extends React.Component {
   constructor(props) {
@@ -99,6 +62,7 @@ class Home extends React.Component {
         <View style={styles.list}>
           {this.state.orders.map((l, i) => (
             <HomeLists
+              handlePress={this.handlePress}
               key={i}
               updated_at={l.updated_at}
               entity_name={l.entity.name}
@@ -117,7 +81,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   list: {
-    marginTop: 20,
+    marginTop: 0,
     borderTopWidth: 1,
     borderColor: "#FD6B78",
     backgroundColor: "#fff"

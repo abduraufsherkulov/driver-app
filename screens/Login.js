@@ -71,6 +71,7 @@ export default class Login extends React.Component {
     })
       .then(async response => {
         if (response.status === 200) {
+          console.log(response);
           let token = response.data;
           await AsyncStorage.setItem("access_token", token.access_token);
           let driver_info = token.driver_info;
