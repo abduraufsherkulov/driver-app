@@ -26,69 +26,26 @@ class MyOrders extends React.Component {
     };
   }
 
-  componentWillUnmount() {
-    this._navListener.remove();
-  }
-
-  async componentDidMount() {
-    this._navListener = this.props.navigation.addListener("didFocus", () => {
-      StatusBar.setBarStyle("dark-content");
-      isAndroid && StatusBar.setBackgroundColor("#8ac53f");
-    });
-    let token = await AsyncStorage.getItem("access_token");
-    const url = "https://api.delivera.uz/drivers/my-orders";
-    axios({
-      method: "get",
-      url: url,
-      auth: {
-        username: "delivera",
-        password: "X19WkHHupFJBPsMRPCJwTbv09yCD50E2"
-      },
-      headers: {
-        "content-type": "application/json",
-        token: token
-      }
-    })
-      .then(response => {
-        this.setState({
-          myorders: response.data.orders
-        });
-        console.log(response.data.orders);
-      })
-      .catch(error => {
-        console.log(error.response, "error");
-      });
-  }
-
   handlePress = () => {
     this.props.navigation.navigate("MyInfoScreen", {});
-  };
-
-  static navigationOptions = {
-    tabBarLabel: "Мои заказы",
-    tabBarIcon: ({ tintColor, focused, horizontal }) => (
-      <Ionicons
-        name={focused ? "ios-home" : "ios-home-outline"}
-        size={horizontal ? 20 : 26}
-        style={{ color: tintColor }}
-      />
-    )
   };
   render() {
     return (
       <SafeAreaView forceInset={{ horizontal: "always", top: "always" }}>
         <ScrollView>
           <View style={styles.list}>
-            {this.state.myorders.map((l, i) => (
+            {this.props.screenProps.myOrdersList.map((l, i) => (
               <MyOrdersList
                 handlePress={this.handlePress}
-                key={i}
+                key={l.id}
                 updated_at={l.updated_at}
                 entity_name={l.entity.name}
                 id={l.id}
                 period={l.period}
                 nav={this.props.navigation}
                 allProps={l}
+                acceptNewOrder={this.props.screenProps.acceptNewOrder}
+                getFromRest={this.props.screenProps.getFromRest}
               />
             ))}
           </View>

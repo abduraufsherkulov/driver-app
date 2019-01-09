@@ -16,7 +16,7 @@ import axios from "axios";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
-const BG_IMAGE = require("../assets/images/wallpaper_4.png");
+const BG_IMAGE = require("../assets/images/wallpaper_3.jpg");
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -45,11 +45,15 @@ export default class Login extends React.Component {
     } = this.state;
 
     this.setState({
-      showLoading: !showLoading
+      showLoading: !showLoading,
+      username_valid: true
     });
+
+    // username: "driver1",
+    // password: "3618462",
     const data = JSON.stringify({
-      username: "driver1",
-      password: "3618462",
+      username: this.state.username,
+      password: this.state.password,
       info: {
         platform: platform,
         app_version: app_version,
@@ -70,18 +74,25 @@ export default class Login extends React.Component {
       headers: { "content-type": "application/json" }
     })
       .then(async response => {
+        console.log(response);
         if (response.status === 200) {
-          console.log(response);
-          let token = response.data;
-          await AsyncStorage.setItem("access_token", token.access_token);
-          let driver_info = token.driver_info;
-          await AsyncStorage.multiSet([
-            ["id", driver_info.id.toString()],
-            ["username", driver_info.username],
-            ["full_name", driver_info.full_name],
-            ["phone", driver_info.phone.toString()]
-          ]);
-          this.props.navigation.navigate("App");
+          if (response.data.status === "Fail") {
+            this.setState({
+              username_valid: false,
+              showLoading: false
+            });
+          } else {
+            let token = response.data;
+            await AsyncStorage.setItem("access_token", token.access_token);
+            let driver_info = token.driver_info;
+            await AsyncStorage.multiSet([
+              ["id", driver_info.id.toString()],
+              ["username", driver_info.username],
+              ["full_name", driver_info.full_name],
+              ["phone", driver_info.phone.toString()]
+            ]);
+            this.props.navigation.navigate("App");
+          }
         } else {
           console.log(response);
         }
@@ -94,7 +105,7 @@ export default class Login extends React.Component {
 
   async componentDidMount() {
     await Font.loadAsync({
-      robotoregular: require("../assets/fonts/Roboto-Regular.ttf")
+      regular: require("../assets/fonts/Montserrat-Regular.ttf")
     });
     this.setState({ fontLoaded: true });
   }
@@ -125,9 +136,15 @@ export default class Login extends React.Component {
                     />
                   }
                   containerStyle={{ marginVertical: 10 }}
-                  onChangeText={username => this.setState({ username })}
+                  onChangeText={username =>
+                    this.setState({ username: username, username_valid: true })
+                  }
                   value={username}
-                  inputStyle={{ marginLeft: 10, color: "white" }}
+                  inputStyle={{
+                    marginLeft: 10,
+                    color: "white",
+                    fontFamily: "regular"
+                  }}
                   keyboardAppearance="light"
                   placeholder="Username"
                   autoFocus={false}
@@ -142,7 +159,9 @@ export default class Login extends React.Component {
                   placeholderTextColor="white"
                   errorStyle={{ textAlign: "center", fontSize: 12 }}
                   errorMessage={
-                    username_valid ? null : "Please enter a valid username"
+                    username_valid
+                      ? null
+                      : "Пожалуйста введите действительное имя пользователя"
                   }
                 />
                 <Input
@@ -156,7 +175,11 @@ export default class Login extends React.Component {
                   containerStyle={{ marginVertical: 10 }}
                   onChangeText={password => this.setState({ password })}
                   value={password}
-                  inputStyle={{ marginLeft: 10, color: "white" }}
+                  inputStyle={{
+                    marginLeft: 10,
+                    color: "white",
+                    fontFamily: "regular"
+                  }}
                   secureTextEntry={true}
                   keyboardAppearance="light"
                   placeholder="Password"
@@ -170,23 +193,21 @@ export default class Login extends React.Component {
                 />
               </View>
               <Button
-                title="LOG IN"
+                title="Войти в систему"
                 activeOpacity={1}
                 underlayColor="transparent"
                 onPress={this.handleSubmit}
                 loading={showLoading}
                 loadingProps={{ size: "small", color: "white" }}
                 disabled={!username_valid && password.length < 8}
-                buttonStyle={{
-                  height: 50,
-                  width: 250,
-                  backgroundColor: "transparent",
-                  borderWidth: 2,
-                  borderColor: "white",
-                  borderRadius: 30
-                }}
+                buttonStyle={styles.buttonMainStyle}
                 containerStyle={{ marginVertical: 10 }}
-                titleStyle={{ fontWeight: "bold", color: "white" }}
+                titleStyle={{
+                  fontWeight: "bold",
+                  color: "white",
+                  fontSize: 20,
+                  fontFamily: "regular"
+                }}
               />
             </View>
           ) : (
@@ -212,6 +233,7 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   loginView: {
+    marginTop: -150,
     backgroundColor: "transparent",
     width: 250,
     height: 400
@@ -223,7 +245,8 @@ const styles = StyleSheet.create({
   },
   travelText: {
     color: "white",
-    fontSize: 30
+    fontSize: 30,
+    fontFamily: "regular"
   },
   plusText: {
     color: "white",
@@ -239,5 +262,13 @@ const styles = StyleSheet.create({
     flex: 0.5,
     justifyContent: "center",
     alignItems: "center"
+  },
+  buttonMainStyle: {
+    height: 50,
+    width: 250,
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderColor: "white",
+    borderRadius: 30
   }
 });

@@ -2,6 +2,9 @@ import React from "react";
 import { StyleSheet, Text, View, Platform, StatusBar } from "react-native";
 import Navigator from "./config/router";
 import { Constants } from "expo";
+import { YellowBox } from "react-native";
+
+YellowBox.ignoreWarnings(["Require cycle:"]);
 
 class App extends React.Component {
   render() {
@@ -11,6 +14,7 @@ class App extends React.Component {
           barStyle="light-content"
           translucent={false}
           backgroundColor="#8ac53f"
+          hidden
         />
         <Navigator />
       </View>

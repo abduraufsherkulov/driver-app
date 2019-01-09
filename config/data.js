@@ -1,39 +1,21 @@
-      //   <View style={styles.container}>
-      //     {this.state.fontLoaded ? (
-      //       <View style={{ width: "100%" }}>
-      //         <Text
-      //           style={{
-      //             fontFamily: "robotoregular",
-      //             fontSize: 56,
-      //             alignSelf: "center"
-      //           }}
-      //         >
-      //           Вход
-      //         </Text>
-      //         <Input
-      //           id="username"
-      //           onChangeText={username => this.setState({ username })}
-      //           inputStyle={{ fontFamily: "robotoregular" }}
-      //           placeholder="Username"
-      //           leftIcon={<Icon name="user" size={24} color="black" />}
-      //         />
+import React, { Component } from "react";
 
-      //         <Input
-      //           id="password"
-      //           onChangeText={password => this.setState({ password })}
-      //           inputStyle={{ fontFamily: "robotoregular" }}
-      //           placeholder="Passwords"
-      //           shake={true}
-      //           leftIcon={<Icon name="shield" size={24} color="black" />}
-      //         />
+class Fonts extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+  }
+  async componentDidMount() {
+    await Font.loadAsync({
+      georgia: require("../assets/fonts/Georgia.ttf"),
+      regular: require("../assets/fonts/Montserrat-Regular.ttf"),
+      light: require("../assets/fonts/Montserrat-Light.ttf"),
+      bold: require("../assets/fonts/Montserrat-Bold.ttf")
+    });
+  }
+  render() {
+    return <React.Fragment />;
+  }
+}
 
-      //         <Button
-      //           titleStyle={{ fontFamily: "robotoregular" }}
-      //           title="Логин"
-      //           icon={<Icon name="arrow-right" size={15} color="white" />}
-      //           iconRight
-      //           onPress={this.handleSubmit}
-      //         />
-      //       </View>
-      //     ) : null}
-      //   </View>
+export default Fonts;

@@ -50,7 +50,13 @@ class MainModal extends Component {
       }
     })
       .then(response => {
-        console.log(response.data);
+        if (response.data.reason === "Accepted") {
+          this.props.closed();
+          this.props.acceptNewOrder();
+          this.setState({
+            loading: false
+          });
+        }
       })
       .catch(error => {
         console.log(error.response);
@@ -58,7 +64,9 @@ class MainModal extends Component {
 
     event.preventDefault();
   };
+
   render() {
+    //console.log(this.props.all);
     return (
       <Modal
         animationType="slide"

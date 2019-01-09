@@ -5,11 +5,15 @@ import {
   Text,
   Card,
   Tile,
-  Icon,
   ListItem,
   Avatar,
-  View
+  View,
+  Input,
+  Button
 } from "react-native-elements";
+
+import { LinearGradient } from "expo";
+import { TouchableHighlight } from "react-native";
 
 import MyOrdersModal from "./MyOrdersModal";
 
@@ -39,8 +43,16 @@ class MyOrdersList extends Component {
     });
   };
   render() {
-    const { id, handlePress, entity_name, updated_at, period } = this.props;
-    let status;
+    const {
+      id,
+      handlePress,
+      entity_name,
+      updated_at,
+      period,
+      allProps
+    } = this.props;
+
+    let time_status;
     //current time
     let now = moment();
     //the time when the food will be ready
@@ -50,22 +62,68 @@ class MyOrdersList extends Component {
     //timeLeft in minutes
     let timeLeft = pickTime.asMinutes().toFixed(0);
     // if time left is less than 0, print order ready
+
     if (timeLeft > 0) {
-      status = timeLeft;
+      time_status = (
+        <Text
+          style={{ fontFamily: "regular", color: "rgba(216, 121, 112, 1)" }}
+        >
+          {timeLeft}
+        </Text>
+      );
     } else {
-      status = "Заказ уже готова";
+      time_status = (
+        <Text style={{ fontFamily: "regular", color: "#8ac53f" }}>
+          Заказ уже готова
+        </Text>
+      );
     }
+    let code = allProps.status.code;
+    const btn_status = code === "in_process" ? "Получил" : "Доставлен";
     return (
       <React.Fragment>
         <ListItem
           onPress={this.handlePress}
-          title={entity_name}
-          subtitle={status}
+          title={
+            <React.Fragment>
+              <Text style={{ fontFamily: "regular" }}>{entity_name}</Text>
+              <Text>
+                <Text style={{ fontFamily: "regular" }}>Сумма: </Text>
+                <Text
+                  style={{
+                    fontFamily: "regular",
+                    color: "#8ac53f",
+                    fontSize: 20
+                  }}
+                >
+                  {this.props.allProps.user.delivery_price}
+                </Text>{" "}
+                Сум
+              </Text>
+            </React.Fragment>
+          }
+          subtitle={time_status}
           chevron
           bottomDivider
           buttonGroup={{
-            buttons: ["Получил"],
-            onPress: this.handleModal
+            buttons: [btn_status],
+            onPress: this.handleModal,
+            buttonStyle: {
+              backgroundColor: "#8ac53f"
+            },
+            containerStyle: {
+              height: 70,
+              borderRadius: 40
+            },
+            textStyle: {
+              color: "white",
+              fontSize: 20,
+              fontFamily: "regular"
+            },
+            style: {
+              fontSize: 20,
+              color: "red"
+            }
           }}
         />
         <MyOrdersModal
@@ -73,6 +131,9 @@ class MyOrdersList extends Component {
           closed={this.handleClose}
           order_id={this.props.id}
           entity_name={entity_name}
+          acceptNewOrder={this.props.acceptNewOrder}
+          getFromRest={this.props.getFromRest}
+          all={this.props.allProps}
         />
       </React.Fragment>
     );
