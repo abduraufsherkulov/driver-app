@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StatusBar, Platform, AsyncStorage } from "react-native";
+import { StatusBar, Platform, AsyncStorage, Image } from "react-native";
 import { Text } from "react-native-elements";
 import {
   createBottomTabNavigator,
@@ -16,135 +16,260 @@ import Login from "../screens/Login";
 import AuthLoading from "../screens/AuthLoading";
 import MyOrders from "../screens/subscreens/MyOrders";
 import NewOrders from "../screens/subscreens/NewOrders";
+import MyArchive from "../screens/subscreens/MyArchive";
 import InfoScreen from "../screens/InfoScreen";
 import MyInfoScreen from "../screens/MyInfoScreen";
+import MyInfoMapScreen from "../screens/MyInfoMapScreen";
+import MyItemsList from "../screens/subscreens/myOrders/MyItemsList";
 import { Font } from "expo";
+import DummyInfoScreen from "../screens/DummyInfoScreen";
 
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 const isAndroid = Platform.OS === "android";
 
 const OrderInfo = createStackNavigator({
   MainOrders: {
-    screen: NewOrders,
-    navigationOptions: {
-      title: "Главная",
-      header: null
-    }
+    screen: NewOrders
+    // navigationOptions: {
+    //   // title: "Главная",
+    //   header: <OrdersInfoTitle />
+    // }
   },
-  InfoScreen: { screen: InfoScreen }
+  InfoScreen: {
+    screen: InfoScreen,
+    navigationOptions: {
+      tabBarVisible: false
+    }
+  }
 });
 
 const MyOrderInfo = createStackNavigator({
   MyMainOrders: {
-    screen: MyOrders,
+    screen: MyOrders
+  },
+  MyInfoScreen: { screen: MyInfoScreen },
+  MyInfoMapScreen: {
+    screen: MyInfoMapScreen
+  },
+  MyItemsList: {
+    screen: MyItemsList
+  }
+});
+
+OrderInfo.navigationOptions = ({ navigation }) => {
+  let { routeName } = navigation.state.routes[navigation.state.index];
+  let navigationOptions = {};
+
+  if (routeName === "InfoScreen") {
+    navigationOptions.tabBarVisible = false;
+  }
+
+  return navigationOptions;
+};
+MyOrderInfo.navigationOptions = ({ navigation }) => {
+  let { routeName } = navigation.state.routes[navigation.state.index];
+  let navigationOptions = {};
+
+  if (
+    routeName === "MyInfoScreen" ||
+    routeName === "MyInfoMapScreen" ||
+    routeName === "MyItemsList"
+  ) {
+    navigationOptions.tabBarVisible = false;
+  }
+
+  return navigationOptions;
+};
+
+class MaterialTopTabsTitle extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fontLoaded: false
+    };
+  }
+
+  async componentDidMount() {
+    await Font.loadAsync({
+      regular: require("../assets/fonts/GoogleSans-Regular.ttf")
+    });
+    this.setState({
+      fontLoaded: true
+    });
+  }
+  render() {
+    return (
+      <Text style={{ flex: 1, textAlign: "center" }}>
+        {this.state.fontLoaded ? (
+          <Text
+            style={{
+              flex: 1,
+              fontFamily: "regular",
+              fontSize: 12,
+              color: this.props.focusColor,
+              alignSelf: "center"
+            }}
+          >
+            {"Главная"}
+          </Text>
+        ) : null}
+      </Text>
+    );
+  }
+}
+
+class ArchiveTitle extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fontLoaded: false
+    };
+  }
+
+  async componentDidMount() {
+    await Font.loadAsync({
+      regular: require("../assets/fonts/GoogleSans-Regular.ttf")
+    });
+    this.setState({
+      fontLoaded: true
+    });
+  }
+  render() {
+    return (
+      <Text style={{ flex: 1, textAlign: "center" }}>
+        {this.state.fontLoaded ? (
+          <Text
+            style={{
+              flex: 1,
+              fontFamily: "regular",
+              fontSize: 12,
+              color: this.props.focusColor,
+              alignSelf: "center"
+            }}
+          >
+            {"Архив"}
+          </Text>
+        ) : null}
+      </Text>
+    );
+  }
+}
+class DashboardTitle extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fontLoaded: false
+    };
+  }
+
+  async componentDidMount() {
+    await Font.loadAsync({
+      regular: require("../assets/fonts/GoogleSans-Regular.ttf")
+    });
+    this.setState({
+      fontLoaded: true
+    });
+  }
+  render() {
+    return (
+      <Text style={{ flex: 1, textAlign: "center" }}>
+        {this.state.fontLoaded ? (
+          <Text
+            style={{
+              flex: 1,
+              fontFamily: "regular",
+              fontSize: 12,
+              color: this.props.focusColor,
+              alignSelf: "center"
+            }}
+          >
+            {"Профиль"}
+          </Text>
+        ) : null}
+      </Text>
+    );
+  }
+}
+
+const MyMainArchive = createStackNavigator({
+  MyMainArchive: {
+    screen: MyArchive,
     navigationOptions: {
       title: "1233",
       header: null
     }
   },
-  MyInfoScreen: { screen: MyInfoScreen }
+  DummyInfoScreen: { screen: DummyInfoScreen }
 });
 
-class NewOrdersTitle extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fontLoaded: false
-    };
-  }
-
-  async componentDidMount() {
-    await Font.loadAsync({
-      georgia: require("../assets/fonts/Georgia.ttf"),
-      regular: require("../assets/fonts/Montserrat-Regular.ttf"),
-      light: require("../assets/fonts/Montserrat-Light.ttf"),
-      bold: require("../assets/fonts/Montserrat-Bold.ttf")
-    });
-    this.setState({
-      fontLoaded: true
-    });
-  }
-  render() {
-    return (
-      <Text>
-        {this.state.fontLoaded ? (
-          <Text
-            style={{
-              fontFamily: "regular",
-              fontSize: 18,
-              color: "white"
-            }}
-          >
-            {"Заказы".toUpperCase()}
-          </Text>
-        ) : null}
-      </Text>
-    );
-  }
-}
-
-class MyOrdersTitle extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fontLoaded: false
-    };
-  }
-
-  async componentDidMount() {
-    await Font.loadAsync({
-      georgia: require("../assets/fonts/Georgia.ttf"),
-      regular: require("../assets/fonts/Montserrat-Regular.ttf"),
-      light: require("../assets/fonts/Montserrat-Light.ttf"),
-      bold: require("../assets/fonts/Montserrat-Bold.ttf")
-    });
-    this.setState({
-      fontLoaded: true
-    });
-  }
-  render() {
-    return (
-      <Text>
-        {this.state.fontLoaded ? (
-          <Text
-            style={{
-              fontFamily: "regular",
-              fontSize: 18,
-              color: "white"
-            }}
-          >
-            {"Мои заказы".toUpperCase()}
-          </Text>
-        ) : null}
-      </Text>
-    );
-  }
-}
-const HomeTabs = createMaterialTopTabNavigator(
+const TabNavigator = createBottomTabNavigator(
   {
-    NewOrders: {
+    Main: {
       screen: OrderInfo,
       navigationOptions: {
-        tabBarLabel: <NewOrdersTitle />
+        tabBarLabel: ({ tintColor, focused, horizontal }) => (
+          <MaterialTopTabsTitle focusColor={focused ? "#5caa57" : "#000000"} />
+        ),
+        tabBarIcon: ({ tintColor, focused, horizontal }) => (
+          <FontAwesome
+            name={focused ? "circle" : "circle-thin"}
+            size={horizontal ? 20 : 26}
+            style={{ color: tintColor }}
+          />
+        )
       }
     },
-    MyOrders: {
+    Archive: {
       screen: MyOrderInfo,
       navigationOptions: {
-        tabBarLabel: <MyOrdersTitle />
+        tabBarLabel: ({ tintColor, focused, horizontal }) => (
+          <ArchiveTitle focusColor={focused ? "#5caa57" : "#000000"} />
+        ),
+        tabBarIcon: ({ tintColor, focused, horizontal }) => {
+          return (
+            <FontAwesome
+              name={focused ? "circle" : "circle-thin"}
+              size={horizontal ? 20 : 26}
+              style={{ color: tintColor }}
+            />
+          );
+        }
+      }
+    },
+    Dashboard: {
+      screen: Dashboard,
+      navigationOptions: {
+        tabBarLabel: ({ tintColor, focused, horizontal }) => (
+          <DashboardTitle focusColor={focused ? "#5caa57" : "#000000"} />
+        ),
+        tabBarIcon: ({ tintColor, focused, horizontal }) => {
+          return (
+            <FontAwesome
+              name={focused ? "circle" : "circle-thin"}
+              size={horizontal ? 20 : 26}
+              style={{ color: tintColor }}
+            />
+          );
+        }
       }
     }
   },
   {
     tabBarOptions: {
+      activeTintColor: "#5caa57",
+      inactiveTintColor: "gray",
       style: {
-        backgroundColor: "#8ac53f",
-        paddingVertical: 10
-      },
-      labelStyle: { fontSize: 18 }
+        paddingTop: 8,
+        paddingBottom: 6
+      }
+    },
+    navigationOptions: {
+      tabBarVisible: false
     }
   }
 );
+
+//const AuthStack = createStackNavigator({ Login: Login });
 
 class MaterialTopTabs extends React.Component {
   constructor(props) {
@@ -152,26 +277,88 @@ class MaterialTopTabs extends React.Component {
     this.state = {
       newOrdersList: [],
       myOrdersList: [],
-
+      refreshing: false,
       fontLoaded: false
     };
   }
 
+  _onRefreshNewOrders = async () => {
+    this.setState({ refreshing: true });
+
+    let token = await AsyncStorage.getItem("access_token");
+    const urlOrders = "https://api.delivera.uz/drivers/orders";
+    axios({
+      method: "get",
+      url: urlOrders,
+      auth: {
+        username: "delivera",
+        password: "X19WkHHupFJBPsMRPCJwTbv09yCD50E2"
+      },
+      headers: {
+        "content-type": "application/json",
+        token: token
+      }
+    })
+      .then(response => {
+        // console.log(response.data);
+        this.setState({
+          newOrdersList: response.data.orders,
+          refreshing: false
+        });
+      })
+      .catch(error => {
+        console.log(error.response, "error");
+      });
+  };
+
+  _onRefreshMyOrders = async () => {
+    this.setState({ refreshing: true });
+
+    let token = await AsyncStorage.getItem("access_token");
+    const urlOrders = "https://api.delivera.uz/drivers/my-orders";
+    axios({
+      method: "get",
+      url: urlOrders,
+      auth: {
+        username: "delivera",
+        password: "X19WkHHupFJBPsMRPCJwTbv09yCD50E2"
+      },
+      headers: {
+        "content-type": "application/json",
+        token: token
+      }
+    })
+      .then(response => {
+        this.setState({
+          myOrdersList: response.data.orders,
+          refreshing: false
+        });
+      })
+      .catch(error => {
+        console.log(error.response, "error");
+      });
+  };
+
   async componentDidMount() {
     this.loadToAction();
 
+    this.intervaller = setInterval(() => {
+      this.loadToAction();
+    }, 20000);
+
     await Font.loadAsync({
-      georgia: require("../assets/fonts/Georgia.ttf"),
-      regular: require("../assets/fonts/Montserrat-Regular.ttf"),
-      light: require("../assets/fonts/Montserrat-Light.ttf"),
-      bold: require("../assets/fonts/Montserrat-Bold.ttf")
+      regular: require("../assets/fonts/GoogleSans-Regular.ttf"),
+      medium: require("../assets/fonts/GoogleSans-Medium.ttf")
     });
     this.setState({
       fontLoaded: true
     });
   }
-
+  componentWillUnmount() {
+    clearInterval(this.intervaller);
+  }
   loadToAction = async () => {
+    this.setState({ refreshing: true });
     let token = await AsyncStorage.getItem("access_token");
     const urlOrders = "https://api.delivera.uz/drivers/orders";
     axios({
@@ -192,8 +379,9 @@ class MaterialTopTabs extends React.Component {
         });
       })
       .catch(error => {
-        console.log(error.response, "error");
+        console.log(error, "error");
       });
+
     const urlMyOrders = "https://api.delivera.uz/drivers/my-orders";
     axios({
       method: "get",
@@ -209,12 +397,13 @@ class MaterialTopTabs extends React.Component {
     })
       .then(response => {
         this.setState({
-          myOrdersList: response.data.orders
+          myOrdersList: response.data.orders,
+          refreshing: false
         });
         // console.log(response.data.orders);
       })
       .catch(error => {
-        console.log(error.response, "error");
+        console.log(error, "error");
       });
   };
   loadToMyOrders = async () => {
@@ -239,16 +428,19 @@ class MaterialTopTabs extends React.Component {
         // console.log(response.data.orders);
       })
       .catch(error => {
-        console.log(error.response, "error");
+        console.log(error, "error");
       });
   };
 
-  static router = HomeTabs.router;
+  static router = TabNavigator.router;
 
   render() {
     return (
-      <HomeTabs
+      <TabNavigator
         screenProps={{
+          refreshState: this.state.refreshing,
+          refreshNewOrders: this._onRefreshNewOrders,
+          refreshMyOrders: this._onRefreshMyOrders,
           newOrdersList: this.state.newOrdersList,
           myOrdersList: this.state.myOrdersList,
           acceptNewOrder: this.loadToAction,
@@ -260,135 +452,11 @@ class MaterialTopTabs extends React.Component {
   }
 }
 
-class MaterialTopTabsTitle extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fontLoaded: false
-    };
-  }
-
-  async componentDidMount() {
-    await Font.loadAsync({
-      georgia: require("../assets/fonts/Georgia.ttf"),
-      regular: require("../assets/fonts/Montserrat-Regular.ttf"),
-      light: require("../assets/fonts/Montserrat-Light.ttf"),
-      bold: require("../assets/fonts/Montserrat-Bold.ttf")
-    });
-    this.setState({
-      fontLoaded: true
-    });
-  }
-  render() {
-    return (
-      <Text style={{ flex: 1, textAlign: "center" }}>
-        {this.state.fontLoaded ? (
-          <Text
-            style={{
-              flex: 1,
-              fontFamily: "regular",
-              fontSize: 15,
-              color: this.props.focusColor,
-              alignSelf: "center"
-            }}
-          >
-            {"Главная".toUpperCase()}
-          </Text>
-        ) : null}
-      </Text>
-    );
-  }
-}
-
-class DashboardTitle extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      fontLoaded: false
-    };
-  }
-
-  async componentDidMount() {
-    await Font.loadAsync({
-      georgia: require("../assets/fonts/Georgia.ttf"),
-      regular: require("../assets/fonts/Montserrat-Regular.ttf"),
-      light: require("../assets/fonts/Montserrat-Light.ttf"),
-      bold: require("../assets/fonts/Montserrat-Bold.ttf")
-    });
-    this.setState({
-      fontLoaded: true
-    });
-  }
-  render() {
-    return (
-      <Text style={{ flex: 1, textAlign: "center" }}>
-        {this.state.fontLoaded ? (
-          <Text
-            style={{
-              flex: 1,
-              fontFamily: "regular",
-              fontSize: 15,
-              color: this.props.focusColor,
-              alignSelf: "center"
-            }}
-          >
-            {"Настройки".toUpperCase()}
-          </Text>
-        ) : null}
-      </Text>
-    );
-  }
-}
-const TabNavigator = createBottomTabNavigator(
-  {
-    Main: {
-      screen: MaterialTopTabs,
-      navigationOptions: {
-        tabBarLabel: ({ tintColor, focused, horizontal }) => (
-          <MaterialTopTabsTitle focusColor={focused ? "#8ac53f" : "grey"} />
-        ),
-        tabBarIcon: ({ tintColor, focused, horizontal }) => (
-          <MaterialCommunityIcons
-            name={focused ? "home-map-marker" : "home-outline"}
-            size={horizontal ? 20 : 26}
-            style={{ color: tintColor }}
-          />
-        )
-      }
-    },
-    Dashboard: {
-      screen: Dashboard,
-      navigationOptions: {
-        tabBarLabel: ({ tintColor, focused, horizontal }) => (
-          <DashboardTitle focusColor={focused ? "#8ac53f" : "grey"} />
-        ),
-        tabBarIcon: ({ tintColor, focused, horizontal }) => {
-          return (
-            <MaterialCommunityIcons
-              name={focused ? "account" : "account-outline"}
-              size={horizontal ? 20 : 26}
-              style={{ color: tintColor }}
-            />
-          );
-        }
-      }
-    }
-  },
-  {
-    tabBarOptions: {
-      activeTintColor: "#8ac53f",
-      inactiveTintColor: "gray"
-    }
-  }
-);
-
-//const AuthStack = createStackNavigator({ Login: Login });
-
 export default createAppContainer(
   createSwitchNavigator(
     {
       AuthLoading: AuthLoading,
-      App: TabNavigator,
+      App: MaterialTopTabs,
       Auth: Login
     },
     {

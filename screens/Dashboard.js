@@ -14,6 +14,7 @@ import {
 
 import { Button } from "react-native-elements";
 import { Font } from "expo";
+import axios from "axios";
 const isAndroid = Platform.OS === "android";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -30,17 +31,18 @@ class Dashboard extends React.Component {
       fontLoaded: false,
       username: "",
       full_name: "",
-      phone: ""
+      phone: "",
+      token: "",
+      loading: false
     };
   }
 
   async componentDidMount() {
     await Font.loadAsync({
-      georgia: require("../assets/fonts/Georgia.ttf"),
-      regular: require("../assets/fonts/Montserrat-Regular.ttf"),
-      light: require("../assets/fonts/Montserrat-Light.ttf"),
-      bold: require("../assets/fonts/Montserrat-Bold.ttf")
+      regular: require("../assets/fonts/GoogleSans-Regular.ttf"),
+      medium: require("../assets/fonts/GoogleSans-Medium.ttf")
     });
+    let token = await AsyncStorage.getItem("access_token");
     await AsyncStorage.multiGet(["username", "full_name", "phone"]).then(
       response => {
         this.setState({
@@ -51,15 +53,45 @@ class Dashboard extends React.Component {
       }
     );
     this.setState({
-      fontLoaded: true
+      fontLoaded: true,
+      token: token
     });
   }
 
   _signOutAsync = async () => {
-    await AsyncStorage.clear();
-    this.props.navigation.navigate("Auth");
+    this.setState({
+      loading: true
+    });
+    const urlLogout = "https://api.delivera.uz/drivers/logout";
+    axios({
+      method: "post",
+      url: urlLogout,
+      auth: {
+        username: "delivera",
+        password: "X19WkHHupFJBPsMRPCJwTbv09yCD50E2"
+      },
+      headers: {
+        "content-type": "application/json",
+        token: this.state.token
+      }
+    })
+      .then(response => {
+        console.log(response.data);
+        this.setState(
+          {
+            loading: false
+          },
+          async () => {
+            await AsyncStorage.clear();
+            this.props.navigation.navigate("Auth");
+          }
+        );
+        // console.log(response.data.orders);
+      })
+      .catch(error => {
+        console.log(error, "error");
+      });
   };
-
   render() {
     return (
       <SafeAreaView style={{ flex: 1 }}>
@@ -99,7 +131,7 @@ class Dashboard extends React.Component {
                     flex: 1,
                     fontSize: 26,
                     color: "rgba(47,44,60,1)",
-                    fontFamily: "bold"
+                    fontFamily: "medium"
                   }}
                 >
                   {this.state.username}
@@ -120,7 +152,7 @@ class Dashboard extends React.Component {
                     flex: 1,
                     fontSize: 26,
                     color: "green",
-                    fontFamily: "bold",
+                    fontFamily: "medium",
                     textAlign: "right"
                   }}
                 >
@@ -285,7 +317,10 @@ class Dashboard extends React.Component {
           <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >
-            <Image source={BG_IMAGE} style={styles.loaderStyle} />
+            <Image
+              style={{ width: 100, height: 100 }}
+              source={require("../assets/loader.gif")}
+            />
           </View>
         )}
       </SafeAreaView>

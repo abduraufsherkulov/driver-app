@@ -1,18 +1,13 @@
 import React, { Component } from "react";
 
 import moment from "moment";
-import {
-  Text,
-  Card,
-  Tile,
-  ListItem,
-  Avatar,
-  View,
-  Input
-} from "react-native-elements";
-
+import { Card, Tile, ListItem, Avatar, Input } from "react-native-elements";
+import { Text, View, Stylesheet, Image } from "react-native";
+import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Font } from "expo";
 import MainModal from "./MainModal";
+import TouchableScale from "react-native-touchable-scale";
+const two_point = require("../../../assets/images/two_point.png");
 
 class HomeLists extends Component {
   constructor(props) {
@@ -36,15 +31,16 @@ class HomeLists extends Component {
   handlePress = () => {
     const { allProps } = this.props;
     this.props.nav.navigate("InfoScreen", {
-      all: allProps
+      all: allProps,
+      acceptNewOrder: this.props.acceptNewOrder,
+      getFromRest: this.props.getFromRest,
+      nav: this.props.nav
     });
   };
   async componentDidMount() {
     await Font.loadAsync({
-      georgia: require("../../../assets/fonts/Georgia.ttf"),
-      regular: require("../../../assets/fonts/Montserrat-Regular.ttf"),
-      light: require("../../../assets/fonts/Montserrat-Light.ttf"),
-      bold: require("../../../assets/fonts/Montserrat-Bold.ttf")
+      regular: require("../../../assets/fonts/GoogleSans-Regular.ttf"),
+      medium: require("../../../assets/fonts/GoogleSans-Medium.ttf")
     });
     this.setState({
       fontLoaded: true
@@ -74,78 +70,194 @@ class HomeLists extends Component {
     if (timeLeft > 0) {
       time_status = (
         <Text
-          style={{ fontFamily: "regular", color: "rgba(216, 121, 112, 1)" }}
+          style={{
+            fontFamily: "regular",
+            backgroundColor: "rgba(216, 121, 112, 1)"
+          }}
         >
           {timeLeft}
         </Text>
       );
     } else {
       time_status = (
-        <Text style={{ fontFamily: "regular", color: "#8ac53f" }}>
-          Заказ уже готова
+        <Text
+          style={{
+            fontFamily: "medium",
+            color: "white",
+            backgroundColor: "#5caa57",
+            paddingHorizontal: 20,
+            paddingVertical: 10,
+            borderRadius: 20,
+            fontSize: 14
+          }}
+        >
+          Готово
         </Text>
       );
     }
-
+    console.log(this.props.allProps);
     return (
       <React.Fragment>
         {this.state.fontLoaded ? (
-          <React.Fragment>
+          <View
+            style={{
+              backgroundColor: "#fff",
+              borderWidth: 1,
+              borderRadius: 2,
+              borderColor: "#ddd",
+              borderBottomWidth: 0,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.7,
+              shadowRadius: 2,
+              elevation: 1,
+              marginHorizontal: 20,
+              marginTop: 15
+            }}
+          >
             <ListItem
+              scaleProps={{
+                friction: 90,
+                tension: 100,
+                activeScale: 0.95
+              }}
+              linearGradientProps={{
+                colors: ["#fff", "#fff"],
+                start: [1, 0],
+                end: [0.2, 0]
+              }}
+              containerStyle={{
+                padding: 9
+              }}
               onPress={this.handlePress}
               title={
-                <React.Fragment>
-                  <Text style={{ fontFamily: "regular" }}>{entity_name}</Text>
-                  <Text>
-                    <Text style={{ fontFamily: "regular" }}>Сумма: </Text>
+                <View style={{ flex: 1, flexDirection: "column" }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      paddingBottom: 15
+                    }}
+                  >
                     <Text
                       style={{
-                        fontFamily: "regular",
-                        color: "#8ac53f",
+                        fontFamily: "medium",
                         fontSize: 20
                       }}
                     >
+                      {this.props.allProps.user.name.first_name}
+                      {/* {"  "} {this.props.allProps.user.name.last_name} */}
+                    </Text>
+                    {time_status}
+                  </View>
+                  <View
+                    style={{ flex: 1, flexDirection: "row", paddingBottom: 9 }}
+                  >
+                    <View
+                      style={{
+                        flex: 0.35,
+                        flexDirection: "row",
+                        alignItems: "flex-end"
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontFamily: "medium",
+                          color: "#848484",
+                          fontSize: 62,
+                          marginBottom: -10
+                        }}
+                      >
+                        <Text style={{ fontSize: 20 }}>≈</Text>
+                        {Math.round(this.props.allProps.user.delivery_distance)}
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: "medium",
+                          fontSize: 14,
+                          color: "#848484"
+                        }}
+                      >
+                        KM
+                      </Text>
+                    </View>
+                    <View style={{ flex: 0.1 }}>
+                      <Image source={two_point} />
+                    </View>
+                    <View
+                      style={{
+                        flex: 0.55,
+                        flexDirection: "column",
+                        justifyContent: "space-between"
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontFamily: "medium",
+                          fontSize: 12,
+                          color: "#848484"
+                        }}
+                      >
+                        {this.props.allProps.user.delivery_text}
+                      </Text>
+                      <Text
+                        style={{
+                          fontFamily: "medium",
+                          fontSize: 12,
+                          color: "#848484"
+                        }}
+                      >
+                        {this.props.allProps.entity.name}
+                      </Text>
+                    </View>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+
+                      borderColor: "#d9d9d9",
+                      borderTopWidth: 1
+                    }}
+                  >
+                    <Text
+                      style={{
+                        fontFamily: "regular",
+                        color: "gray",
+                        paddingTop: 9
+                      }}
+                    >
                       {this.props.allProps.user.delivery_price}
-                    </Text>{" "}
-                    Сум
-                  </Text>
-                </React.Fragment>
+                    </Text>
+                    <Text
+                      style={{
+                        fontFamily: "regular",
+                        color: "gray",
+                        paddingTop: 9
+                      }}
+                    >
+                      {this.props.allProps.user.delivery_price}
+                    </Text>
+                  </View>
+                </View>
               }
-              subtitle={time_status}
-              chevron
-              bottomDivider
-              buttonGroup={{
-                buttons: ["Принят"],
-                onPress: this.handleModal,
-                buttonStyle: {
-                  backgroundColor: "#8ac53f"
-                },
-                containerStyle: {
-                  height: 70,
-                  borderRadius: 40
-                },
-                textStyle: {
-                  color: "white",
-                  fontSize: 20,
-                  fontFamily: "regular"
-                },
-                style: {
-                  fontSize: 20,
-                  color: "red"
-                }
-              }}
+              // subtitle={
+              // }
             />
-            <MainModal
-              openUp={this.state.opened}
-              closed={this.handleClose}
-              order_id={this.props.id}
-              entity_name={entity_name}
-              acceptNewOrder={this.props.acceptNewOrder}
-              getFromRest={this.props.getFromRest}
-              all={this.props.allProps}
+          </View>
+        ) : (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <Image
+              style={{ width: 100, height: 100 }}
+              source={require("../../../assets/loader.gif")}
             />
-          </React.Fragment>
-        ) : null}
+          </View>
+        )}
       </React.Fragment>
     );
   }

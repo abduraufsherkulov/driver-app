@@ -7,19 +7,24 @@ import {
   Image,
   View,
   Linking,
-  Dimensions
+  Dimensions,
+  AsyncStorage
 } from "react-native";
 import {
   Constants,
   Location,
   Permissions,
   MapView,
-  Polyline,
   IntentLauncherAndroid
 } from "expo";
 
+import BottomDrawer from "rn-bottom-drawer";
+
 import { Font } from "expo";
 
+import { Feather } from "@expo/vector-icons";
+
+import Polyline from "@mapbox/polyline";
 import MainModal from "./subscreens/newOrders/MainModal";
 
 const PIN_RESTRAUNT = require("../assets/images/restraunt.png");
@@ -28,7 +33,9 @@ import axios from "axios";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-class MyInfoScreenTitle extends Component {
+const TAB_BAR_HEIGHT = 49;
+
+class InfoScreenTitle extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,10 +45,8 @@ class MyInfoScreenTitle extends Component {
 
   async componentDidMount() {
     await Font.loadAsync({
-      georgia: require("../assets/fonts/Georgia.ttf"),
-      regular: require("../assets/fonts/Montserrat-Regular.ttf"),
-      light: require("../assets/fonts/Montserrat-Light.ttf"),
-      bold: require("../assets/fonts/Montserrat-Bold.ttf")
+      regular: require("../assets/fonts/GoogleSans-Regular.ttf"),
+      medium: require("../assets/fonts/GoogleSans-Medium.ttf")
     });
     this.setState({
       fontLoaded: true
@@ -55,10 +60,10 @@ class MyInfoScreenTitle extends Component {
             style={{
               fontFamily: "regular",
               fontSize: 18,
-              color: "white"
+              color: "black"
             }}
           >
-            {"Номер заказа: " + this.props.navigation.getParam("all").id}
+            {"Номер заказа: " + this.props.main_id}
           </Text>
         ) : null}
       </Text>
@@ -67,6 +72,7 @@ class MyInfoScreenTitle extends Component {
 }
 
 class InfoScreen extends Component {
+  _isMounted = false;
   constructor(props) {
     super(props);
 
@@ -93,18 +99,63 @@ class InfoScreen extends Component {
       duration: {
         text: "",
         value: +""
-      }
+      },
+      loading: false,
+      order_id: +""
     };
   }
 
-  _isMounted = false;
-
   _pressCall = () => {
     let allVal = this.props.navigation.getParam("all");
-    const url = `tel://${allVal.user.phone}`;
+    const url = `tel://+${allVal.user.phone}`;
     Linking.openURL(url);
   };
 
+  handleSubmit = event => {
+    let allVal = this.props.navigation.getParam("all");
+    const { params } = this.props.navigation.state;
+    this.setState({
+      loading: true
+    });
+    const data = JSON.stringify({
+      order_id: this.state.order_id
+    });
+    const url = "https://api.delivera.uz/drivers/accept";
+
+    axios({
+      method: "post",
+      url: url,
+      data: data,
+      auth: {
+        username: "delivera",
+        password: "X19WkHHupFJBPsMRPCJwTbv09yCD50E2"
+      },
+      headers: {
+        "content-type": "application/json",
+        token: this.state.token
+      }
+    })
+      .then(response => {
+        console.log(response.data);
+        if (response.data.reason === "Accepted") {
+          params.getFromRest();
+          params.acceptNewOrder();
+          this.setState(
+            {
+              loading: false
+            },
+            () => {
+              this.props.navigation.goBack();
+            }
+          );
+        }
+      })
+      .catch(error => {
+        console.log(error.response);
+      });
+
+    event.preventDefault();
+  };
   handleModal = () => {
     this.setState({
       opened: true
@@ -120,13 +171,13 @@ class InfoScreen extends Component {
     this._isMounted = true;
 
     await Font.loadAsync({
-      georgia: require("../assets/fonts/Georgia.ttf"),
-      regular: require("../assets/fonts/Montserrat-Regular.ttf"),
-      light: require("../assets/fonts/Montserrat-Light.ttf"),
-      bold: require("../assets/fonts/Montserrat-Bold.ttf")
+      regular: require("../assets/fonts/GoogleSans-Regular.ttf"),
+      medium: require("../assets/fonts/GoogleSans-Medium.ttf")
     });
 
-    this.setState({ fontLoaded: true });
+    let allVal = this.props.navigation.getParam("all");
+    let token = await AsyncStorage.getItem("access_token");
+    let order_id = allVal.id;
     if (Platform.OS === "android" && !Constants.isDevice) {
       this.setState({
         errorMessage:
@@ -137,6 +188,8 @@ class InfoScreen extends Component {
         await this._getLocationAsync();
       }
     }
+
+    this.setState({ fontLoaded: true, token: token, order_id: order_id });
   }
 
   _getLocationAsync = async () => {
@@ -152,6 +205,10 @@ class InfoScreen extends Component {
 
     let lat = +allVal.entity.latitude;
     let long = +allVal.entity.longitude;
+    let userLat = +allVal.user.latitude;
+    let userLong = +allVal.user.longitude;
+    let overVIew = allVal.user.map_info.points;
+    let polyway = Polyline.decode(overVIew);
 
     if (providerStatus.locationServicesEnabled === false) {
       await this.openGeneralLocationSettings();
@@ -165,37 +222,19 @@ class InfoScreen extends Component {
 
         let driverLat = this.state.location.coords.latitude;
         let driverLong = this.state.location.coords.longitude;
-
-        const myUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${driverLat},${driverLong}&destination=${lat},${long}&mode=driving&units=metric&alternatives=false&key=AIzaSyAzYOL6bw06c3P1Tq3aZoXH34RviHjyAro`;
-        axios({
-          method: "get",
-          url: myUrl
-        })
-          .then(response => {
-            let getLength = response.data.routes[0]["legs"][0]["steps"].length;
-            let steps = response.data.routes[0]["legs"][0]["steps"];
-            let i = 0;
-            let mainArr = [];
-            for (i; i < getLength; i++) {
-              let start = {};
-              start.latitude = steps[i].start_location.lat;
-              start.longitude = steps[i].start_location.lng;
-              let end = {};
-              end.latitude = steps[i].end_location.lat;
-              end.longitude = steps[i].end_location.lng;
-
-              mainArr.push(start);
-              mainArr.push(end);
-            }
-            this.setState({
-              distance: response.data.routes[0]["legs"][0]["distance"],
-              duration: response.data.routes[0]["legs"][0]["duration"],
-              poly: mainArr
-            });
-          })
-          .catch(error => {
-            console.log(error);
+        // console.log(response.data);
+        if (this._isMounted) {
+          let coords = polyway.map((point, index) => {
+            return {
+              latitude: point[0],
+              longitude: point[1]
+            };
           });
+
+          this.setState({
+            poly: coords
+          });
+        }
         this.locationPromise = await Location.watchPositionAsync(
           {
             enableHighAccuracy: true,
@@ -221,36 +260,17 @@ class InfoScreen extends Component {
       let driverLat = this.state.location.coords.latitude;
       let driverLong = this.state.location.coords.longitude;
 
-      const myUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${driverLat},${driverLong}&destination=${lat},${long}&mode=driving&units=metric&alternatives=false&key=AIzaSyAzYOL6bw06c3P1Tq3aZoXH34RviHjyAro`;
-      axios({
-        method: "get",
-        url: myUrl
-      })
-        .then(response => {
-          let getLength = response.data.routes[0]["legs"][0]["steps"].length;
-          let steps = response.data.routes[0]["legs"][0]["steps"];
-          let i = 0;
-          let mainArr = [];
-          for (i; i < getLength; i++) {
-            let start = {};
-            start.latitude = steps[i].start_location.lat;
-            start.longitude = steps[i].start_location.lng;
-            let end = {};
-            end.latitude = steps[i].end_location.lat;
-            end.longitude = steps[i].end_location.lng;
-
-            mainArr.push(start);
-            mainArr.push(end);
-          }
-          this.setState({
-            distance: response.data.routes[0]["legs"][0]["distance"],
-            duration: response.data.routes[0]["legs"][0]["duration"],
-            poly: mainArr
-          });
-        })
-        .catch(error => {
-          console.log(error);
+      if (this._isMounted) {
+        let coords = polyway.map((point, index) => {
+          return {
+            latitude: point[0],
+            longitude: point[1]
+          };
         });
+        this.setState({
+          poly: coords
+        });
+      }
       this.locationPromise = await Location.watchPositionAsync(
         {
           enableHighAccuracy: true,
@@ -298,8 +318,69 @@ class InfoScreen extends Component {
     }
     this._isMounted = false;
   }
+  hex = c => {
+    var s = "0123456789abcdef";
+    var i = parseInt(c);
+    if (i == 0 || isNaN(c)) return "00";
+    i = Math.round(Math.min(Math.max(0, i), 255));
+    return s.charAt((i - (i % 16)) / 16) + s.charAt(i % 16);
+  };
+
+  /* Convert an RGB triplet to a hex string */
+  convertToHex = rgb => {
+    let test = this.hex(rgb[0]) + this.hex(rgb[1]) + this.hex(rgb[2]);
+    return "#" + test;
+  };
+
+  /* Remove '#' in color hex string */
+  trim(s) {
+    return s.charAt(0) == "#" ? s.substring(1, 7) : s;
+  }
+
+  /* Convert a hex string to an RGB triplet */
+  convertToRGB = hex => {
+    var color = [];
+    color[0] = parseInt(this.trim(hex).substring(0, 2), 16);
+    color[1] = parseInt(this.trim(hex).substring(2, 4), 16);
+    color[2] = parseInt(this.trim(hex).substring(4, 6), 16);
+    return color;
+  };
+
+  generateColor = (colorStart, colorEnd, colorCount) => {
+    // The beginning of your gradient
+    var start = this.convertToRGB(colorStart);
+
+    // The end of your gradient
+    var end = this.convertToRGB(colorEnd);
+
+    // The number of colors to compute
+    var len = colorCount;
+
+    //Alpha blending amount
+    var alpha = 0.0;
+
+    var saida = [];
+
+    for (i = 0; i < len; i++) {
+      var c = [];
+      alpha += 1.0 / len;
+
+      c[0] = start[0] * alpha + (1 - alpha) * end[0];
+      c[1] = start[1] * alpha + (1 - alpha) * end[1];
+      c[2] = start[2] * alpha + (1 - alpha) * end[2];
+
+      saida.push(this.convertToHex(c));
+    }
+
+    return saida;
+  };
   static navigationOptions = ({ navigation }) => ({
-    tabBarLabel: "Номер заказа: " + navigation.getParam("all").id,
+    headerTitle: (
+      <InfoScreenTitle
+        navigation={navigation}
+        main_id={navigation.getParam("all").id}
+      />
+    ),
     headerStyle: {
       backgroundColor: "white",
       paddingTop: 0,
@@ -315,28 +396,41 @@ class InfoScreen extends Component {
     headerForceInset: { top: "never", bottom: "never" }
   });
   render() {
+    // console.log(this.props.navigation.state.routeName);
     let allVal = this.props.navigation.getParam("all");
     let text = "Waiting..";
+    let { estimated_time, delivery_distance, delivery_price } = allVal.user;
 
     if (this.state.errorMessage) {
       text = this.state.errorMessage;
     } else if (this.state.location) {
       text = JSON.stringify(this.state.location);
     }
-    let polygam = this.state.poly ? (
-      <MapView.Polyline
-        coordinates={this.state.poly}
-        strokeWidth={7}
-        strokeColor="#00a8ff"
-        lineCap="round"
-      />
-    ) : null;
+    //#fb5607;
+    //5caa57
+    let polygam;
+    if (this.state.poly) {
+      // let pushMe = this.generateColor(
+      //   "#fb5607",
+      //   "#5caa57",
+      //   this.state.poly.length
+      // );
+      polygam = (
+        <MapView.Polyline
+          coordinates={this.state.poly}
+          strokeWidth={5}
+          strokeColor="#00b3fd"
+          // strokeColors={pushMe.length === 0 ? "#00a8ff" : pushMe}
+          lineCap="round"
+        />
+      );
+    }
     return (
       <View style={{ flex: 1 }}>
         {this.state.fontLoaded ? (
           <View style={{ flex: 1 }}>
             <MapView
-              style={{ flex: 0.5 }}
+              style={{ flex: 1 }}
               initialRegion={{
                 latitude: +allVal.entity.latitude,
                 longitude: +allVal.entity.longitude,
@@ -345,27 +439,22 @@ class InfoScreen extends Component {
               }}
               showsUserLocation={true}
               region={this.state.region}
-              // onLayout={() => {
-              //   this.mark.showCallout();
-              // }}
             >
               <MapView.Marker
-                // ref={ref => {
-                //   this.mark = ref;
-                // }}
-                image={require("../assets/images/restraunt.png")}
+                // image={require("../assets/images/restraunt.png")}
                 coordinate={{
                   latitude: +allVal.entity.latitude,
                   longitude: +allVal.entity.longitude
                 }}
                 title={allVal.entity.name}
-                //description={text}
-              />
+              >
+                <Image
+                  style={{ width: 38, height: 38 }}
+                  source={require("../assets/images/restraunt.png")}
+                />
+              </MapView.Marker>
               <MapView.Marker
-                // ref={ref => {
-                //   this.mark = ref;
-                // }}
-                image={require("../assets/images/home.png")}
+                // image={require("../assets/images/home.png")}
                 coordinate={{
                   latitude: +allVal.user.latitude,
                   longitude: +allVal.user.longitude
@@ -373,47 +462,104 @@ class InfoScreen extends Component {
                 title={
                   allVal.user.name.first_name + " " + allVal.user.name.last_name
                 }
-                //description={text}
-              />
+              >
+                <Image
+                  style={{ width: 38, height: 38 }}
+                  source={require("../assets/images/home.png")}
+                />
+              </MapView.Marker>
               {polygam}
             </MapView>
-            <View style={{ flex: 0.5 }}>
-              <View style={{ flex: 1, marginTop: 5 }}>
-                <Text
-                  style={{
-                    flex: 0.1,
-                    fontSize: 15,
-                    color: "rgba(216, 121, 112, 1)",
-                    fontFamily: "regular",
-                    marginLeft: 40
-                  }}
-                >
-                  ИНФО
-                </Text>
+            <BottomDrawer
+              shadow={true}
+              containerHeight={400}
+              offset={100}
+              startUp={false}
+              downDisplay={330}
+            >
+              <View style={{ flex: 1, flexDirection: "column" }}>
+                <View style={{ flex: 0.2, justifyContent: "center" }}>
+                  <Feather
+                    name="chevrons-up"
+                    size={22}
+                    color="rgba(47,44,60,1)"
+                    style={{ alignSelf: "center" }}
+                  />
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: "#acacac",
+                      fontFamily: "regular",
+                      alignSelf: "center"
+                    }}
+                  >
+                    Информация о заказе
+                  </Text>
+                </View>
                 <View
                   style={{
-                    flex: 0.5,
-                    flexDirection: "row",
-                    marginTop: 0,
-                    marginHorizontal: 15
+                    flex: 0.6,
+                    flexDirection: "column",
+                    marginHorizontal: 26
                   }}
                 >
-                  <View style={{ flex: 1, flexDirection: "row" }}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.infoTypeLabel}>Дистанция</Text>
-                      {/* <Text style={styles.infoTypeLabel}>Длительность</Text> */}
-                      <Text style={styles.infoTypeLabel}>Цена</Text>
-                      <Text style={styles.infoTypeLabel}>Имя клиента</Text>
-                      <Text style={styles.infoTypeLabel}>Номер телефона</Text>
-                    </View>
-                    <View style={{ flex: 1, marginLeft: 10 }}>
-                      <Text style={styles.infoAnswerLabel}>
-                        {this.state.distance.text} (≈ {this.state.duration.text}
-                        )
-                      </Text>
-                      {/* <Text style={styles.infoAnswerLabel}>
-                        {this.state.duration.text}
-                      </Text> */}
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      borderTopWidth: 1,
+                      borderBottomWidth: 1,
+                      borderBottomColor: "#f0f0f0",
+                      borderTopColor: "#f0f0f0"
+                    }}
+                  >
+                    <Text style={styles.infoTypeLabel}>Расстояние</Text>
+                    <Text style={styles.infoAnswerLabel}>
+                      {delivery_distance}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      borderBottomWidth: 1,
+                      borderBottomColor: "#f0f0f0"
+                    }}
+                  >
+                    <Text style={styles.infoTypeLabel}>Время</Text>
+                    <Text style={styles.infoAnswerLabel}>
+                      {estimated_time.text}
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      borderBottomWidth: 1,
+                      borderBottomColor: "#f0f0f0"
+                    }}
+                  >
+                    <Text style={styles.infoTypeLabel}>Стоимость доставки</Text>
+                    <Text style={styles.infoAnswerLabel}>{delivery_price}</Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: "row",
+                      alignItems: "center",
+                      borderBottomWidth: 1,
+                      borderBottomColor: "#f0f0f0"
+                    }}
+                  >
+                    <Text style={styles.infoTypeLabel}>Цена заказа</Text>
+                    <Text style={styles.infoAnswerLabel}>
+                      {allVal.totalPrice}
+                    </Text>
+                  </View>
+                  {/* <View style={{ flex: 1, marginLeft: 10 }}>
                       <Text style={styles.infoAnswerLabel}>
                         {allVal.user.delivery_price} Сум
                       </Text>
@@ -429,21 +575,21 @@ class InfoScreen extends Component {
                         }}
                         onPress={this._pressCall}
                       >
-                        {allVal.user.phone}
+                        +{allVal.user.phone}
                       </Text>
-                    </View>
-                  </View>
+                    </View> */}
                 </View>
 
                 <View
                   style={{
-                    flex: 0.4,
+                    flex: 0.2,
                     justifyContent: "center",
                     alignItems: "center"
                   }}
                 >
                   <Button
                     containerStyle={{ marginVertical: 20 }}
+                    loading={this.state.loading}
                     style={{
                       flex: 1,
                       justifyContent: "center",
@@ -455,26 +601,22 @@ class InfoScreen extends Component {
                       borderRadius: 30,
                       justifyContent: "center",
                       alignItems: "center",
-                      backgroundColor: "#8ac53f"
+                      backgroundColor: "#5caa57",
+                      elevation: 0
                     }}
-                    // linearGradientProps={{
-                    //   colors: ["rgba(214,116,112,1)", "rgba(233,174,87,1)"],
-                    //   start: [1, 0],
-                    //   end: [0.2, 0]
-                    // }}
-                    title={"Принят"}
+                    title={"Принять заказ"}
                     titleStyle={{
                       fontFamily: "regular",
                       fontSize: 20,
                       color: "white",
                       textAlign: "center"
                     }}
-                    onPress={this.handleModal}
-                    activeOpacity={0.5}
+                    onPress={this.handleSubmit}
+                    loadingProps={{ size: "small", color: "white" }}
                   />
                 </View>
               </View>
-            </View>
+            </BottomDrawer>
 
             <MainModal
               openUp={this.state.opened}
@@ -490,7 +632,10 @@ class InfoScreen extends Component {
           <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >
-            <Button title="log out" onPress={this._signOutAsync} />
+            <Image
+              style={{ width: 100, height: 100 }}
+              source={require("../assets/loader.gif")}
+            />
           </View>
         )}
       </View>
@@ -500,17 +645,16 @@ class InfoScreen extends Component {
 
 const styles = StyleSheet.create({
   infoTypeLabel: {
-    fontSize: 15,
-    textAlign: "right",
-    color: "rgba(126,123,138,1)",
-    fontFamily: "regular",
-    paddingBottom: 10
+    flex: 1,
+    fontSize: 14,
+    color: "#acacac",
+    fontFamily: "regular"
   },
   infoAnswerLabel: {
-    fontSize: 15,
-    color: "rgba(47,44,60,1)",
-    fontFamily: "regular",
-    paddingBottom: 10
+    flex: 1,
+    fontSize: 14,
+    color: "#333333",
+    fontFamily: "regular"
   }
 });
 
