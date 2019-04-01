@@ -7,7 +7,11 @@ import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Font } from "expo";
 import MyOrdersModal from "./MyOrdersModal";
 import TouchableScale from "react-native-touchable-scale";
-const two_point = require("../../../assets/images/two_point.png");
+import {
+  TwoPoints,
+  SmallCar,
+  DollarCoin
+} from "../../../assets/images/MainSvg";
 
 class MyOrdersList extends Component {
   constructor(props) {
@@ -40,42 +44,42 @@ class MyOrdersList extends Component {
   async componentDidMount() {
     await Font.loadAsync({
       regular: require("../../../assets/fonts/GoogleSans-Regular.ttf"),
-      medium: require("../../../assets/fonts/GoogleSans-Medium.ttf")
+      medium: require("../../../assets/fonts/GoogleSans-Medium.ttf"),
+      bold: require("../../../assets/fonts/GoogleSans-Bold.ttf")
     });
     this.setState({
       fontLoaded: true
     });
   }
   render() {
-    const {
-      id,
-      handlePress,
-      entity_name,
-      updated_at,
-      period,
-      allProps
-    } = this.props;
-
+    const { id, handlePress, entity_name, allProps } = this.props;
+    const { food_accepted_at, period } = allProps;
     let time_status;
     //current time
     let now = moment();
     //the time when the food will be ready
-    let readyTime = moment(updated_at).add(+period, "minutes");
+    let readyTime = moment(food_accepted_at).add(+period, "minutes");
     //the difference between readyTime and Now
     let pickTime = moment.duration(readyTime.diff(now));
     //timeLeft in minutes
-    let timeLeft = pickTime.asMinutes().toFixed(0);
+    let timeLeft = +pickTime.asMinutes().toFixed(0);
     // if time left is less than 0, print order ready
 
     if (timeLeft > 0) {
       time_status = (
         <Text
           style={{
-            fontFamily: "regular",
-            backgroundColor: "rgba(216, 121, 112, 1)"
+            fontFamily: "medium",
+            color: "#5caa57",
+            borderColor: "#5caa57",
+            borderWidth: 1,
+            paddingHorizontal: 20,
+            paddingVertical: 10,
+            borderRadius: 20,
+            fontSize: 14
           }}
         >
-          {timeLeft}
+          {timeLeft} мин.
         </Text>
       );
     } else {
@@ -106,10 +110,6 @@ class MyOrdersList extends Component {
               borderRadius: 2,
               borderColor: "#ddd",
               borderBottomWidth: 0,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.7,
-              shadowRadius: 2,
               elevation: 1,
               marginHorizontal: 20,
               marginTop: 15
@@ -184,7 +184,7 @@ class MyOrdersList extends Component {
                       </Text>
                     </View>
                     <View style={{ flex: 0.1 }}>
-                      <Image source={two_point} />
+                      <TwoPoints />
                     </View>
                     <View
                       style={{
@@ -200,7 +200,7 @@ class MyOrdersList extends Component {
                           color: "#848484"
                         }}
                       >
-                        {this.props.allProps.user.delivery_text}
+                      {this.props.allProps.entity.name}
                       </Text>
                       <Text
                         style={{
@@ -209,38 +209,65 @@ class MyOrdersList extends Component {
                           color: "#848484"
                         }}
                       >
-                        {this.props.allProps.entity.name}
+                      {this.props.allProps.user.delivery_text}
                       </Text>
                     </View>
                   </View>
+
                   <View
                     style={{
                       flex: 1,
                       flexDirection: "row",
                       justifyContent: "space-between",
-
                       borderColor: "#d9d9d9",
-                      borderTopWidth: 1
+                      borderTopWidth: 1,
+                      paddingTop: 9
                     }}
                   >
-                    <Text
-                      style={{
-                        fontFamily: "regular",
-                        color: "gray",
-                        paddingTop: 9
-                      }}
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                      {this.props.allProps.user.delivery_price}
-                    </Text>
-                    <Text
-                      style={{
-                        fontFamily: "regular",
-                        color: "gray",
-                        paddingTop: 9
-                      }}
+                      <View style={{ paddingRight: 9 }}>
+                        <SmallCar />
+                      </View>
+                      <Text
+                        style={{
+                          fontFamily: "bold",
+                          color: "gray",
+                          fontSize: 14
+                        }}
+                      >
+                        {this.props.allProps.user.delivery_price} сум
+                      </Text>
+                    </View>
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                      {this.props.allProps.user.delivery_price}
-                    </Text>
+                      <View style={{ paddingRight: 9 }}>
+                        <DollarCoin />
+                      </View>
+                      {this.props.allProps.payment_type.code === "payme" ? (
+                        <Text
+                          style={{
+                            fontFamily: "bold",
+                            color: "#5caa57",
+                            fontSize: 14
+                          }}
+                        >
+                          ОПЛАЧЕНА
+                        </Text>
+                      ) : (
+                        <Text
+                          style={{
+                            fontFamily: "bold",
+                            color: "gray",
+                            fontSize: 14
+                          }}
+                        >
+                          {this.props.allProps.totalPrice} сум
+                        </Text>
+                      )}
+                    </View>
                   </View>
                 </View>
               }

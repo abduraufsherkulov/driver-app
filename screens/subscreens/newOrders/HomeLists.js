@@ -2,12 +2,16 @@ import React, { Component } from "react";
 
 import moment from "moment";
 import { Card, Tile, ListItem, Avatar, Input } from "react-native-elements";
-import { Text, View, Stylesheet, Image } from "react-native";
+import { Text, View, StyleSheet, Image } from "react-native";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Font } from "expo";
 import MainModal from "./MainModal";
 import TouchableScale from "react-native-touchable-scale";
-const two_point = require("../../../assets/images/two_point.png");
+import {
+  TwoPoints,
+  SmallCar,
+  DollarCoin
+} from "../../../assets/images/MainSvg";
 
 class HomeLists extends Component {
   constructor(props) {
@@ -34,28 +38,19 @@ class HomeLists extends Component {
       all: allProps,
       acceptNewOrder: this.props.acceptNewOrder,
       getFromRest: this.props.getFromRest,
-      nav: this.props.nav
+      nav: this.props.nav,
+      finished: this.props.finished
     });
   };
   async componentDidMount() {
     await Font.loadAsync({
       regular: require("../../../assets/fonts/GoogleSans-Regular.ttf"),
-      medium: require("../../../assets/fonts/GoogleSans-Medium.ttf")
+      medium: require("../../../assets/fonts/GoogleSans-Medium.ttf"),
+      bold: require("../../../assets/fonts/GoogleSans-Bold.ttf")
     });
-    this.setState({
-      fontLoaded: true
-    });
-  }
-  render() {
-    const {
-      id,
-      handlePress,
-      entity_name,
-      updated_at,
-      period,
-      allProps
-    } = this.props;
 
+    const { id, handlePress, entity_name, allProps } = this.props;
+    const { updated_at, period } = allProps;
     let time_status;
     //current time
     let now = moment();
@@ -64,18 +59,42 @@ class HomeLists extends Component {
     //the difference between readyTime and Now
     let pickTime = moment.duration(readyTime.diff(now));
     //timeLeft in minutes
-    let timeLeft = pickTime.asMinutes().toFixed(0);
+    let timeLeft = +pickTime.asMinutes().toFixed(0);
     // if time left is less than 0, print order ready
+    // if(timeLeft === 0 || timeLeft < 0){
 
+    // }
+    this.setState({
+      fontLoaded: true,
+      timeLeft: timeLeft
+    });
+  }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.state.timeLeft !== prevState.timeLeft) {
+      if (this.state.timeLeft === 0 || this.state.timeLeft < 0) {
+        this.props.ready();
+      }
+    }
+  }
+
+  render() {
+    const { timeLeft } = this.state;
     if (timeLeft > 0) {
       time_status = (
         <Text
           style={{
-            fontFamily: "regular",
-            backgroundColor: "rgba(216, 121, 112, 1)"
+            fontFamily: "medium",
+            color: "#5caa57",
+            borderColor: "#5caa57",
+            borderWidth: 1,
+            paddingHorizontal: 20,
+            paddingVertical: 10,
+            borderRadius: 20,
+            fontSize: 14
           }}
         >
-          {timeLeft}
+          {timeLeft} мин.
         </Text>
       );
     } else {
@@ -95,7 +114,6 @@ class HomeLists extends Component {
         </Text>
       );
     }
-    console.log(this.props.allProps);
     return (
       <React.Fragment>
         {this.state.fontLoaded ? (
@@ -184,7 +202,7 @@ class HomeLists extends Component {
                       </Text>
                     </View>
                     <View style={{ flex: 0.1 }}>
-                      <Image source={two_point} />
+                      <TwoPoints />
                     </View>
                     <View
                       style={{
@@ -200,7 +218,7 @@ class HomeLists extends Component {
                           color: "#848484"
                         }}
                       >
-                        {this.props.allProps.user.delivery_text}
+                        {this.props.allProps.entity.name}
                       </Text>
                       <Text
                         style={{
@@ -209,7 +227,7 @@ class HomeLists extends Component {
                           color: "#848484"
                         }}
                       >
-                        {this.props.allProps.entity.name}
+                        {this.props.allProps.user.delivery_text}
                       </Text>
                     </View>
                   </View>
@@ -218,29 +236,55 @@ class HomeLists extends Component {
                       flex: 1,
                       flexDirection: "row",
                       justifyContent: "space-between",
-
                       borderColor: "#d9d9d9",
-                      borderTopWidth: 1
+                      borderTopWidth: 1,
+                      paddingTop: 9
                     }}
                   >
-                    <Text
-                      style={{
-                        fontFamily: "regular",
-                        color: "gray",
-                        paddingTop: 9
-                      }}
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                      {this.props.allProps.user.delivery_price}
-                    </Text>
-                    <Text
-                      style={{
-                        fontFamily: "regular",
-                        color: "gray",
-                        paddingTop: 9
-                      }}
+                      <View style={{ paddingRight: 9 }}>
+                        <SmallCar />
+                      </View>
+                      <Text
+                        style={{
+                          fontFamily: "bold",
+                          color: "gray",
+                          fontSize: 14
+                        }}
+                      >
+                        {this.props.allProps.user.delivery_price} сум
+                      </Text>
+                    </View>
+                    <View
+                      style={{ flexDirection: "row", alignItems: "center" }}
                     >
-                      {this.props.allProps.user.delivery_price}
-                    </Text>
+                      <View style={{ paddingRight: 9 }}>
+                        <DollarCoin />
+                      </View>
+                      {this.props.allProps.payment_type.code === "payme" ? (
+                        <Text
+                          style={{
+                            fontFamily: "bold",
+                            color: "#5caa57",
+                            fontSize: 14
+                          }}
+                        >
+                          ОПЛАЧЕНА
+                        </Text>
+                      ) : (
+                        <Text
+                          style={{
+                            fontFamily: "bold",
+                            color: "gray",
+                            fontSize: 14
+                          }}
+                        >
+                          {this.props.allProps.totalPrice} сум
+                        </Text>
+                      )}
+                    </View>
                   </View>
                 </View>
               }

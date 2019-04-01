@@ -1,29 +1,49 @@
-import React from "react";
+import React, { Component } from "react";
+import { SafeAreaView } from "react-navigation";
+import moment from "moment";
 import {
   AsyncStorage,
-  StyleSheet,
-  Text,
   View,
-  SafeAreaView,
-  Image,
-  ScrollView,
-  Dimensions,
   StatusBar,
-  Platform
+  StyleSheet,
+  Platform,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  RefreshControl
 } from "react-native";
-
-import { Button } from "react-native-elements";
-import { Font } from "expo";
 import axios from "axios";
+import { EvilIcons } from "@expo/vector-icons";
+import { Text, Button } from "react-native-elements";
+import { Font } from "expo";
+
 const isAndroid = Platform.OS === "android";
 
-const SCREEN_WIDTH = Dimensions.get("window").width;
-const SCREEN_HEIGHT = Dimensions.get("window").height;
+import {
+  NavigationLogo,
+  Phone,
+  Lock,
+  RectangleDivider,
+  HorizontalDivider
+} from "../assets/images/MainSvg";
 
-const BG_IMAGE = require("../assets/images/loader.png");
-const IMAGE_SIZE = SCREEN_WIDTH - 80;
+class MyDashboardTitle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fontLoaded: false
+    };
+  }
+  render() {
+    return (
+      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+        <NavigationLogo />
+      </View>
+    );
+  }
+}
 
-class Dashboard extends React.Component {
+class Dashboard extends Component {
   constructor(props) {
     super(props);
 
@@ -33,7 +53,8 @@ class Dashboard extends React.Component {
       full_name: "",
       phone: "",
       token: "",
-      loading: false
+      loading: false,
+      showLoading: false
     };
   }
 
@@ -92,227 +113,139 @@ class Dashboard extends React.Component {
         console.log(error, "error");
       });
   };
+
+  static navigationOptions = ({ navigation }) => ({
+    headerTitle: <MyDashboardTitle />,
+    headerStyle: {
+      backgroundColor: "white",
+      paddingTop: 0,
+      height: 60
+    },
+    headerTitleStyle: { color: "rgba(126,123,138,1)" },
+    headerLeftContainerStyle: {
+      padding: 0
+    },
+    headerTitleContainerStyle: {
+      padding: 0
+    },
+    headerForceInset: { top: "never", bottom: "never" }
+  });
+
   render() {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar barStyle="light-content" />
+      <React.Fragment>
         {this.state.fontLoaded ? (
-          <View style={{ flex: 1, backgroundColor: "white" }}>
-            <View style={styles.statusBar} />
-            <View style={styles.navBar}>
-              <Text style={styles.nameHeader}>{this.state.full_name}</Text>
-            </View>
+          <SafeAreaView style={{ flex: 1 }}>
             <ScrollView style={{ flex: 1 }}>
               <View style={{ justifyContent: "center", alignItems: "center" }}>
-                <Image
-                  source={{
-                    uri:
-                      "https://www.instituteofhypnotherapy.com/wp-content/uploads/2016/01/tutor-8.jpg"
-                  }}
-                  style={{
-                    width: IMAGE_SIZE,
-                    height: IMAGE_SIZE,
-                    borderRadius: 10
-                  }}
-                />
+                <Text style={{ fontFamily: "medium", fontSize: 20 }}>
+                  {this.state.full_name}
+                </Text>
               </View>
               <View
                 style={{
-                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
                   flexDirection: "row",
-                  marginTop: 20,
-                  marginHorizontal: 40,
+                  paddingTop: 31,
+                  paddingBottom: 43
+                }}
+              >
+                <View style={styles.twoCols}>
+                  <Phone />
+                  <Text style={styles.lilTitle}>номер</Text>
+                  <Text style={styles.infoPart}>{this.state.phone}</Text>
+                  <Text style={styles.changeButton}>Изменить</Text>
+                </View>
+                <View
+                  style={{
+                    flex: 0.1,
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }}
+                >
+                  <RectangleDivider />
+                </View>
+                <View style={styles.twoCols}>
+                  <Lock />
+                  <Text style={styles.lilTitle}>пароль</Text>
+                  <Text style={styles.infoPart}>* * * * * * *</Text>
+                  <Text style={styles.changeButton}>Изменить</Text>
+                </View>
+              </View>
+              <View
+                style={{
                   justifyContent: "center",
                   alignItems: "center"
                 }}
               >
+                <HorizontalDivider />
+              </View>
+
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  paddingTop: 9
+                }}
+              >
                 <Text
                   style={{
-                    flex: 1,
-                    fontSize: 26,
-                    color: "rgba(47,44,60,1)",
+                    fontFamily: "medium",
+                    fontSize: 16,
+                    color: "#707070"
+                  }}
+                >
+                  Статистика
+                </Text>
+              </View>
+
+              <View
+                style={{
+                  justifyContent: "center",
+                  alignItems: "center",
+                  flexDirection: "row",
+                  paddingTop: 21,
+                  paddingBottom: 12
+                }}
+              >
+                <View style={styles.twoCols}>
+                  <Text style={styles.subTitle}>лучшая доставка</Text>
+                  <Text style={styles.subTitleInfo}>0 минут</Text>
+                </View>
+
+                <View
+                  style={{
+                    flex: 0.1,
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }}
+                >
+                  <RectangleDivider />
+                </View>
+
+                <View style={styles.twoCols}>
+                  <Text style={styles.subTitle}>худшая доставка</Text>
+                  <Text style={styles.subTitleInfo}>0 минут</Text>
+                </View>
+              </View>
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Button
+                  type="solid"
+                  title="ВЫЙТИ"
+                  onPress={this._signOutAsync}
+                  loading={this.state.showLoading}
+                  loadingProps={{ size: "small", color: "white" }}
+                  buttonStyle={styles.buttonMainStyle}
+                  titleStyle={{
+                    color: "white",
+                    fontSize: 20,
                     fontFamily: "medium"
                   }}
-                >
-                  {this.state.username}
-                </Text>
-                <Text
-                  style={{
-                    flex: 0.5,
-                    fontSize: 15,
-                    color: "gray",
-                    textAlign: "left",
-                    marginTop: 5
-                  }}
-                >
-                  0.8 mi
-                </Text>
-                <Text
-                  style={{
-                    flex: 1,
-                    fontSize: 26,
-                    color: "green",
-                    fontFamily: "medium",
-                    textAlign: "right"
-                  }}
-                >
-                  84%
-                </Text>
-              </View>
-              {/* <View
-                style={{
-                  flex: 1,
-                  marginTop: 20,
-                  width: SCREEN_WIDTH - 80,
-                  marginLeft: 40
-                }}
-              >
-                <Text
-                  style={{
-                    flex: 1,
-                    fontSize: 15,
-                    color: "white",
-                    fontFamily: "regular"
-                  }}
-                >
-                  100% Italian, fun loving, affectionate, young lady who knows
-                  what it takes to make a relationship work.
-                </Text>
-              </View> */}
-              {/* <View style={{ flex: 1, marginTop: 30 }}>
-                <Text
-                  style={{
-                    flex: 1,
-                    fontSize: 15,
-                    color: "rgba(216, 121, 112, 1)",
-                    fontFamily: "regular",
-                    marginLeft: 40
-                  }}
-                >
-                  INTERESTS
-                </Text>
-              </View> */}
-              <View style={{ flex: 1, marginTop: 30 }}>
-                <Text
-                  style={{
-                    flex: 1,
-                    fontSize: 15,
-                    color: "rgba(216, 121, 112, 1)",
-                    fontFamily: "regular",
-                    marginLeft: 40
-                  }}
-                >
-                  ИНФО
-                </Text>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    marginTop: 20,
-                    marginHorizontal: 30
-                  }}
-                >
-                  <View style={{ flex: 1, flexDirection: "row" }}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.infoTypeLabel}>Возраст</Text>
-                      <Text style={styles.infoTypeLabel}>Машина</Text>
-                      <Text style={styles.infoTypeLabel}>Номер машины</Text>
-                      <Text style={styles.infoTypeLabel}>Дата регистрации</Text>
-                      <Text style={styles.infoTypeLabel}>Номер телефона</Text>
-                    </View>
-                    <View style={{ flex: 1, marginLeft: 10 }}>
-                      <Text style={styles.infoAnswerLabel}>26</Text>
-                      <Text style={styles.infoAnswerLabel}>Матиз</Text>
-                      <Text style={styles.infoAnswerLabel}>30 A 1235</Text>
-                      <Text style={styles.infoAnswerLabel}>10.01.2019</Text>
-                      <Text style={styles.infoAnswerLabel}>
-                        {this.state.phone}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <View style={{ flex: 1, marginTop: 30 }}>
-                <Text
-                  style={{
-                    flex: 1,
-                    fontSize: 15,
-                    color: "rgba(216, 121, 112, 1)",
-                    fontFamily: "regular",
-                    marginLeft: 40
-                  }}
-                >
-                  СТАТИСТИКА
-                </Text>
-                <View
-                  style={{
-                    flex: 1,
-                    flexDirection: "row",
-                    marginTop: 20,
-                    marginHorizontal: 15
-                  }}
-                >
-                  <View style={{ flex: 1, flexDirection: "row" }}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.infoTypeLabel}>Лучшая доставка</Text>
-                      <Text style={styles.infoTypeLabel}>Худшая Доставка</Text>
-                      <Text style={styles.infoTypeLabel}>
-                        Отработ. километры
-                      </Text>
-                      <Text style={styles.infoTypeLabel}>
-                        Заработанные деньги
-                      </Text>
-                      <Text style={styles.infoTypeLabel}>Процент бонусов</Text>
-                    </View>
-                    <View style={{ flex: 1, marginLeft: 10 }}>
-                      <Text style={styles.infoAnswerLabel}>18 min</Text>
-                      <Text style={styles.infoAnswerLabel}>57 min</Text>
-                      <Text style={styles.infoAnswerLabel}>123 km</Text>
-                      <Text style={styles.infoAnswerLabel}>2 265 500</Text>
-                      <Text style={styles.infoAnswerLabel}>12 %</Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center"
-                }}
-              >
-                <Button
-                  containerStyle={{ marginVertical: 20 }}
-                  style={{
-                    flex: 1,
-                    justifyContent: "center",
-                    alignItems: "center"
-                  }}
-                  buttonStyle={{
-                    height: 55,
-                    width: SCREEN_WIDTH - 40,
-                    borderRadius: 30,
-                    justifyContent: "center",
-                    alignItems: "center"
-                  }}
-                  linearGradientProps={{
-                    colors: ["rgba(214,116,112,1)", "rgba(233,174,87,1)"],
-                    start: [1, 0],
-                    end: [0.2, 0]
-                  }}
-                  title="Выход"
-                  titleStyle={{
-                    fontFamily: "regular",
-                    fontSize: 20,
-                    color: "white",
-                    textAlign: "center"
-                  }}
-                  onPress={this._signOutAsync}
-                  activeOpacity={0.5}
                 />
               </View>
             </ScrollView>
-          </View>
+          </SafeAreaView>
         ) : (
           <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
@@ -323,46 +256,52 @@ class Dashboard extends React.Component {
             />
           </View>
         )}
-      </SafeAreaView>
+      </React.Fragment>
     );
   }
 }
-export default Dashboard;
 
 const styles = StyleSheet.create({
-  statusBar: {
-    height: 10
+  lilTitle: {
+    fontFamily: "regular",
+    fontSize: 14,
+    color: "#acacac",
+    paddingVertical: 10
   },
-  navBar: {
-    height: 60,
-    width: SCREEN_WIDTH,
+  infoPart: {
+    fontFamily: "medium",
+    fontSize: 14,
+    color: "#333333",
+    paddingBottom: 17
+  },
+  changeButton: {
+    fontFamily: "regular",
+    fontSize: 12,
+    color: "#acacac"
+  },
+  subTitle: {
+    fontFamily: "regular",
+    fontSize: 14,
+    color: "#acacac"
+  },
+  subTitleInfo: {
+    fontFamily: "medium",
+    fontSize: 14,
+    color: "#333333"
+  },
+  twoCols: {
+    flex: 0.45,
     justifyContent: "center",
-    alignContent: "center"
+    alignItems: "center"
   },
-  nameHeader: {
-    color: "rgba(47,44,60,1)",
-    fontSize: 22,
-    textAlign: "center",
-    fontFamily: "regular"
-  },
-  infoTypeLabel: {
-    fontSize: 15,
-    textAlign: "right",
-    color: "rgba(126,123,138,1)",
-    fontFamily: "regular",
-    paddingBottom: 10
-  },
-  infoAnswerLabel: {
-    fontSize: 15,
-    color: "rgba(47,44,60,1)",
-    fontFamily: "regular",
-    paddingBottom: 10
-  },
-  loaderStyle: {
-    flex: 1,
-    alignSelf: "stretch",
-    resizeMode: "contain",
-    width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT
+  buttonMainStyle: {
+    height: 45,
+    width: 280,
+    backgroundColor: "#fb5607",
+    borderWidth: 2,
+    borderColor: "white",
+    borderRadius: 28,
+    elevation: 0
   }
 });
+export default Dashboard;

@@ -18,9 +18,9 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text } from "react-native-elements";
 import { Font } from "expo";
 import SvgRender from "./SvgRender";
+import { NavigationLogo } from "../../assets/images/MainSvg";
+import { isLoaded } from "expo-font";
 const isAndroid = Platform.OS === "android";
-
-const image_top = require("../../assets/images/navigator_img.png");
 
 class NewOrdersTitle extends React.Component {
   constructor(props) {
@@ -32,7 +32,7 @@ class NewOrdersTitle extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Image source={image_top} />
+        <NavigationLogo />
       </View>
     );
   }
@@ -45,7 +45,8 @@ class NewOrders extends React.Component {
       openUp: "",
       id: "",
       refreshing: false,
-      fontLoaded: false
+      fontLoaded: false,
+      ready: 0
     };
   }
 
@@ -53,6 +54,23 @@ class NewOrders extends React.Component {
     this.props.navigation.navigate("InfoScreen", {});
   };
 
+  addUp = () => {
+    this.setState({
+      ready: this.state.ready + 1
+    });
+  };
+
+  subtractDown = () => {
+    if (this.state.ready === 0) {
+      this.setState({
+        ready: 0
+      });
+    } else {
+      this.setState({
+        ready: this.state.ready - 1
+      });
+    }
+  };
   _renderItem = ({ item }) => (
     <View style={styles.list}>
       <HomeLists
@@ -60,6 +78,8 @@ class NewOrders extends React.Component {
         key={item.id}
         nav={this.props.navigation}
         allProps={item}
+        ready={this.addUp}
+        finished={this.subtractDown}
         acceptNewOrder={this.props.screenProps.acceptNewOrder}
         getFromRest={this.props.screenProps.getFromRest}
       />
@@ -74,6 +94,8 @@ class NewOrders extends React.Component {
     this.setState({
       fontLoaded: true
     });
+
+    console.log(this.props.screenProps.newOrdersList);
   }
 
   static navigationOptions = ({ navigation }) => ({
@@ -110,7 +132,13 @@ class NewOrders extends React.Component {
                 </Text>
               </View>
             ) : (
-              <SafeAreaView forceInset={{ horizontal: "always", top: "never" }}>
+              <SafeAreaView
+                forceInset={{
+                  horizontal: "always",
+                  top: "never",
+                  bottom: "never"
+                }}
+              >
                 <View
                   style={{
                     width: "100%",
@@ -140,7 +168,8 @@ class NewOrders extends React.Component {
                         color: "white"
                       }}
                     >
-                      {"    "}2 заказа готово
+                      {"    "}
+                      {this.state.ready} заказа готово
                     </Text>
                   </View>
                 </View>
@@ -150,6 +179,7 @@ class NewOrders extends React.Component {
                   keyExtractor={this._keyExtractor}
                   initialScrollIndex={0}
                   initialNumToRender={3}
+                  ListFooterComponent={<View style={{ height: 30 }} />}
                   refreshControl={
                     <RefreshControl
                       refreshing={this.props.screenProps.refreshState}

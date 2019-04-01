@@ -216,7 +216,7 @@ class MyItemsList extends Component {
                     textAlign: "center"
                   }}
                 >
-                  Активные заказы
+                  Состав заказа
                 </Text>
               </View>
               <View style={{ flex: 1, marginTop: 5 }}>

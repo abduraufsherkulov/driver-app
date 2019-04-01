@@ -7,7 +7,8 @@ import {
   Image,
   View,
   Linking,
-  Dimensions
+  Dimensions,
+  BackHandler
 } from "react-native";
 import {
   Constants,
@@ -67,8 +68,19 @@ class MyInfoMapScreenTitle extends Component {
 }
 
 class MyInfoMapScreen extends Component {
+  _didFocusSubscription;
+  _willBlurSubscription;
   constructor(props) {
     super(props);
+
+    this._didFocusSubscription = props.navigation.addListener(
+      "didFocus",
+      payload =>
+        BackHandler.addEventListener(
+          "hardwareBackPress",
+          this.onBackButtonPressAndroid
+        )
+    );
 
     this.state = {
       location: { coords: { latitude: 0, longitude: 0 } },
@@ -117,6 +129,14 @@ class MyInfoMapScreen extends Component {
   };
 
   async componentDidMount() {
+    this._willBlurSubscription = this.props.navigation.addListener(
+      "willBlur",
+      payload =>
+        BackHandler.removeEventListener(
+          "hardwareBackPress",
+          this.onBackButtonPressAndroid
+        )
+    );
     this._isMounted = true;
 
     await Font.loadAsync({
@@ -136,7 +156,10 @@ class MyInfoMapScreen extends Component {
       }
     }
   }
-
+  onBackButtonPressAndroid = () => {
+    this.props.navigation.popToTop();
+    return true;
+  };
   _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== "granted") {
@@ -320,6 +343,9 @@ class MyInfoMapScreen extends Component {
       this.locationPromise.remove();
     }
     this._isMounted = false;
+
+    this._didFocusSubscription && this._didFocusSubscription.remove();
+    this._willBlurSubscription && this._willBlurSubscription.remove();
   }
 
   static navigationOptions = ({ navigation }) => ({

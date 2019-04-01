@@ -190,31 +190,57 @@ class MyOrdersModal extends Component {
               <View
                 style={{
                   flexDirection: "row",
-                  justifyContent: "space-around",
-                  width: "100%",
-                  marginTop: 20
+                  justifyContent: "space-between",
+                  width: "100%"
                 }}
               >
-                <Text
+                <Button
                   style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }}
+                  buttonStyle={{
+                    height: 45,
+                    width: 100,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "transparent",
+                    elevation: 0
+                  }}
+                  title={"НАЗАД"}
+                  titleStyle={{
                     fontSize: 14,
                     color: "#ee4646",
                     fontFamily: "roboto"
                   }}
                   onPress={this.props.closed}
-                >
-                  НАЗАД
-                </Text>
-                <Text
-                  onPress={this.handleSubmit}
+                />
+
+                <Button
+                  loading={this.state.loading}
                   style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center"
+                  }}
+                  buttonStyle={{
+                    height: 45,
+                    width: 150,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    backgroundColor: "transparent",
+                    elevation: 0
+                  }}
+                  title={"ПОДТВЕРДИТЬ"}
+                  titleStyle={{
                     fontSize: 14,
                     color: "#5caa57",
                     fontFamily: "roboto"
                   }}
-                >
-                  ПОДТВЕРДИТЬ
-                </Text>
+                  onPress={this.handleSubmit}
+                  loadingProps={{ size: "small", color: "#5caa57" }}
+                />
               </View>
             </React.Fragment>
           ) : null}

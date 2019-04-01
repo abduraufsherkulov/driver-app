@@ -23,7 +23,7 @@ import { Font } from "expo";
 import { EvilIcons } from "@expo/vector-icons";
 
 // import MyOrdersModal from "./subscreens/myOrders/MyOrdersModal";
-
+import { TwoPoints } from "../assets/images/MainSvg";
 const PIN_RESTRAUNT = require("../assets/images/restraunt.png");
 const two_point = require("../assets/images/two_point.png");
 
@@ -302,7 +302,7 @@ class InfoScreen extends Component {
                   }}
                 >
                   <View style={{ flex: 0.1 }}>
-                    <Image source={two_point} />
+                    <TwoPoints />
                   </View>
                   <View
                     style={{
@@ -420,7 +420,9 @@ class InfoScreen extends Component {
                   }}
                 >
                   <Text style={styles.infoTypeLabel}>Стоимость доставки</Text>
-                  <Text style={styles.infoAnswerLabel}>{delivery_price}</Text>
+                  <Text style={styles.infoAnswerLabel}>
+                    {delivery_price} Сум
+                  </Text>
                 </View>
                 <View
                   style={{
@@ -432,9 +434,22 @@ class InfoScreen extends Component {
                   }}
                 >
                   <Text style={styles.infoTypeLabel}>Стоимость заказа</Text>
-                  <Text style={styles.infoAnswerLabel}>
-                    {allVal.totalPrice}
-                  </Text>
+                  {allVal.payment_type.code === "payme" ? (
+                    <Text
+                      style={{
+                        fontFamily: "bold",
+                        color: "#5caa57",
+                        fontSize: 14,
+                        flex: 1
+                      }}
+                    >
+                      ОПЛАЧЕНА
+                    </Text>
+                  ) : (
+                    <Text style={styles.infoAnswerLabel}>
+                      {delivery_price} сум
+                    </Text>
+                  )}
                 </View>
                 <View
                   style={{
@@ -510,7 +525,7 @@ class InfoScreen extends Component {
                       backgroundColor: "#5caa57",
                       elevation: 0
                     }}
-                    title={"Принять заказ"}
+                    title={"Получил заказ"}
                     titleStyle={{
                       fontFamily: "regular",
                       fontSize: 20,

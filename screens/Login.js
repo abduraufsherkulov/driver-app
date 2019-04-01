@@ -13,12 +13,11 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Input, Button } from "react-native-elements";
-import { Font, Permissions, Notifications } from "expo";
+import { Font, Permissions, Notifications, Svg } from "expo";
 import axios from "axios";
+import { LoginLogo } from "../assets/images/MainSvg";
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
-
-const BG_IMAGE = require("../assets/images/logo.png");
 
 async function registerForPushNotificationsAsync() {
   const { status: existingStatus } = await Permissions.getAsync(
@@ -242,7 +241,10 @@ export default class Login extends React.Component {
             }}
           >
             <View style={styles.loginInput}>
-              <Image source={BG_IMAGE} style={{ marginBottom: 40 }} />
+              <View style={{ marginBottom: 40 }}>
+                <LoginLogo />
+              </View>
+              {/* <Image source={BG_IMAGE} style={{ marginBottom: 40 }} /> */}
               <Input
                 leftIcon={<FontAwesome name="user" color="#5caa57" size={25} />}
                 containerStyle={{ marginBottom: 30, width: "100%" }}

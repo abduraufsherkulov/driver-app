@@ -27,13 +27,15 @@ import DummyInfoScreen from "../screens/DummyInfoScreen";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 const isAndroid = Platform.OS === "android";
 
+const DashboardOrderInfo = createStackNavigator({
+  Dashboard: {
+    screen: Dashboard
+  }
+});
+
 const OrderInfo = createStackNavigator({
   MainOrders: {
     screen: NewOrders
-    // navigationOptions: {
-    //   // title: "Главная",
-    //   header: <OrdersInfoTitle />
-    // }
   },
   InfoScreen: {
     screen: InfoScreen,
@@ -99,15 +101,14 @@ class MaterialTopTabsTitle extends Component {
   }
   render() {
     return (
-      <Text style={{ flex: 1, textAlign: "center" }}>
+      <Text style={{ flex: 1, textAlign: "center", paddingTop: 4 }}>
         {this.state.fontLoaded ? (
           <Text
             style={{
               flex: 1,
               fontFamily: "regular",
               fontSize: 12,
-              color: this.props.focusColor,
-              alignSelf: "center"
+              color: this.props.focusColor
             }}
           >
             {"Главная"}
@@ -136,7 +137,7 @@ class ArchiveTitle extends Component {
   }
   render() {
     return (
-      <Text style={{ flex: 1, textAlign: "center" }}>
+      <Text style={{ flex: 1, textAlign: "center", paddingTop: 4 }}>
         {this.state.fontLoaded ? (
           <Text
             style={{
@@ -147,7 +148,7 @@ class ArchiveTitle extends Component {
               alignSelf: "center"
             }}
           >
-            {"Архив"}
+            {"Мои заказы"}
           </Text>
         ) : null}
       </Text>
@@ -172,7 +173,7 @@ class DashboardTitle extends Component {
   }
   render() {
     return (
-      <Text style={{ flex: 1, textAlign: "center" }}>
+      <Text style={{ flex: 1, textAlign: "center", paddingTop: 4 }}>
         {this.state.fontLoaded ? (
           <Text
             style={{
@@ -237,7 +238,7 @@ const TabNavigator = createBottomTabNavigator(
       }
     },
     Dashboard: {
-      screen: Dashboard,
+      screen: DashboardOrderInfo,
       navigationOptions: {
         tabBarLabel: ({ tintColor, focused, horizontal }) => (
           <DashboardTitle focusColor={focused ? "#5caa57" : "#000000"} />
@@ -259,8 +260,8 @@ const TabNavigator = createBottomTabNavigator(
       activeTintColor: "#5caa57",
       inactiveTintColor: "gray",
       style: {
-        paddingTop: 8,
-        paddingBottom: 6
+        height: 54,
+        paddingTop: 8
       }
     },
     navigationOptions: {

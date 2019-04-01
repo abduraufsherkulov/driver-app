@@ -113,6 +113,7 @@ class InfoScreen extends Component {
 
   handleSubmit = event => {
     let allVal = this.props.navigation.getParam("all");
+    let finished = this.props.navigation.getParam("finished");
     const { params } = this.props.navigation.state;
     this.setState({
       loading: true
@@ -145,7 +146,11 @@ class InfoScreen extends Component {
               loading: false
             },
             () => {
+              finished();
               this.props.navigation.goBack();
+              this.props.navigation.navigate("MyInfoMapScreen", {
+                all: allVal
+              });
             }
           );
         }
@@ -516,7 +521,7 @@ class InfoScreen extends Component {
                   >
                     <Text style={styles.infoTypeLabel}>Расстояние</Text>
                     <Text style={styles.infoAnswerLabel}>
-                      {delivery_distance}
+                      {delivery_distance} км.
                     </Text>
                   </View>
                   <View
@@ -543,7 +548,22 @@ class InfoScreen extends Component {
                     }}
                   >
                     <Text style={styles.infoTypeLabel}>Стоимость доставки</Text>
-                    <Text style={styles.infoAnswerLabel}>{delivery_price}</Text>
+                    {allVal.payment_type.code === "payme" ? (
+                      <Text
+                        style={{
+                          fontFamily: "bold",
+                          color: "#5caa57",
+                          fontSize: 14,
+                          flex: 1
+                        }}
+                      >
+                        ОПЛАЧЕНА
+                      </Text>
+                    ) : (
+                      <Text style={styles.infoAnswerLabel}>
+                        {delivery_price} сум
+                      </Text>
+                    )}
                   </View>
                   <View
                     style={{
@@ -556,28 +576,9 @@ class InfoScreen extends Component {
                   >
                     <Text style={styles.infoTypeLabel}>Цена заказа</Text>
                     <Text style={styles.infoAnswerLabel}>
-                      {allVal.totalPrice}
+                      {allVal.totalPrice} сум
                     </Text>
                   </View>
-                  {/* <View style={{ flex: 1, marginLeft: 10 }}>
-                      <Text style={styles.infoAnswerLabel}>
-                        {allVal.user.delivery_price} Сум
-                      </Text>
-                      <Text style={styles.infoAnswerLabel}>
-                        {allVal.user.name.first_name}
-                      </Text>
-                      <Text
-                        style={{
-                          fontSize: 15,
-                          color: "green",
-                          fontFamily: "regular",
-                          paddingBottom: 10
-                        }}
-                        onPress={this._pressCall}
-                      >
-                        +{allVal.user.phone}
-                      </Text>
-                    </View> */}
                 </View>
 
                 <View

@@ -21,7 +21,7 @@ import { Font } from "expo";
 
 const isAndroid = Platform.OS === "android";
 
-const image_top = require("../../assets/images/navigator_img.png");
+import { NavigationLogo } from "../../assets/images/MainSvg";
 
 class MyOrdersTitle extends React.Component {
   constructor(props) {
@@ -33,7 +33,7 @@ class MyOrdersTitle extends React.Component {
   render() {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Image source={image_top} />
+        <NavigationLogo />
       </View>
     );
   }
@@ -95,30 +95,67 @@ class MyOrders extends React.Component {
     headerForceInset: { top: "never", bottom: "never" }
   });
   render() {
-    return (
-      <SafeAreaView
-        style={{ marginBottom: 100 }}
-        forceInset={{ horizontal: "always", top: "never" }}
+    let listHeaderComponent = (
+      <View
+        style={{
+          width: "100%",
+          marginHorizontal: 20,
+          marginTop: 11
+        }}
       >
-        <View
-          style={{
-            width: "100%",
-            marginHorizontal: 20,
-            marginTop: 11
-          }}
+        <Text style={{ fontFamily: "medium", fontSize: 18, color: "#848484" }}>
+          Активные заказы
+        </Text>
+      </View>
+    );
+    let listFooterComponent = (
+      <View
+        style={{
+          width: "100%",
+          height: 49,
+          paddingHorizontal: 20,
+          backgroundColor: "rgba(242, 242, 242, 0.7)",
+          borderWidth: 1,
+          borderColor: "rgba(112, 112, 112, 0.1)"
+        }}
+      >
+        <TouchableOpacity
+          style={{ flex: 1, alignItems: "center", flexDirection: "row" }}
+          onPress={this.handleHistory}
         >
           <Text
-            style={{ fontFamily: "medium", fontSize: 18, color: "#848484" }}
+            style={{
+              flex: 0.9,
+              fontFamily: "medium",
+              fontSize: 14,
+              color: "#707070"
+            }}
           >
-            Активные заказы
+            Посмотреть историю
           </Text>
-        </View>
+          <Text
+            style={{
+              flex: 0.1,
+              justifyContent: "center",
+              flexDirection: "row",
+              textAlign: "right"
+            }}
+          >
+            <EvilIcons name="chevron-right" size={20} />
+          </Text>
+        </TouchableOpacity>
+      </View>
+    );
+    return (
+      <SafeAreaView forceInset={{ horizontal: "always", top: "never" }}>
         <FlatList
           data={this.props.screenProps.myOrdersList}
           renderItem={this._renderItem}
           keyExtractor={this._keyExtractor}
           initialScrollIndex={0}
           initialNumToRender={3}
+          ListFooterComponent={listFooterComponent}
+          ListHeaderComponent={listHeaderComponent}
           refreshControl={
             <RefreshControl
               refreshing={this.props.screenProps.refreshState}
@@ -132,43 +169,6 @@ class MyOrders extends React.Component {
             />
           }
         />
-
-        <View
-          style={{
-            width: "100%",
-            height: 49,
-            paddingHorizontal: 20,
-            backgroundColor: "rgba(242, 242, 242, 0.7)",
-            borderWidth: 1,
-            borderColor: "rgba(112, 112, 112, 0.1)"
-          }}
-        >
-          <TouchableOpacity
-            style={{ flex: 1, alignItems: "center", flexDirection: "row" }}
-            onPress={this.handleHistory}
-          >
-            <Text
-              style={{
-                flex: 0.9,
-                fontFamily: "medium",
-                fontSize: 14,
-                color: "#707070"
-              }}
-            >
-              Посмотреть историю
-            </Text>
-            <Text
-              style={{
-                flex: 0.1,
-                justifyContent: "center",
-                flexDirection: "row",
-                textAlign: "right"
-              }}
-            >
-              <EvilIcons name="chevron-right" size={20} />
-            </Text>
-          </TouchableOpacity>
-        </View>
       </SafeAreaView>
     );
   }
