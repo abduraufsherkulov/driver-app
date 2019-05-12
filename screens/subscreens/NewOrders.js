@@ -115,6 +115,16 @@ class NewOrders extends React.Component {
     headerForceInset: { top: "never", bottom: "never" }
   });
   render() {
+    let timeLeftText;
+    if (this.state.ready === 0) {
+      timeLeftText = "заказов";
+    } else if (this.state.ready === 1) {
+      timeLeftText = "заказ готов";
+    } else if ((this.state.ready === 2, 3, 4)) {
+      timeLeftText = "заказа готовы";
+    } else {
+      timeLeftText = "заказов готовы";
+    }
     return (
       <React.Fragment>
         {this.state.fontLoaded ? (
@@ -169,7 +179,7 @@ class NewOrders extends React.Component {
                       }}
                     >
                       {"    "}
-                      {this.state.ready} заказа готово
+                      {this.state.ready} {timeLeftText}
                     </Text>
                   </View>
                 </View>

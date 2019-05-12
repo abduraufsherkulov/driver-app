@@ -443,7 +443,7 @@ class InfoScreen extends Component {
                         flex: 1
                       }}
                     >
-                      ОПЛАЧЕНА
+                      ОПЛАЧЕН
                     </Text>
                   ) : (
                     <Text style={styles.infoAnswerLabel}>

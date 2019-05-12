@@ -254,7 +254,7 @@ class MyOrdersList extends Component {
                             fontSize: 14
                           }}
                         >
-                          ОПЛАЧЕНА
+                          ОПЛАЧЕН
                         </Text>
                       ) : (
                         <Text

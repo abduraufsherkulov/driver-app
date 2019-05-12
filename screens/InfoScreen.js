@@ -535,7 +535,7 @@ class InfoScreen extends Component {
                   >
                     <Text style={styles.infoTypeLabel}>Время</Text>
                     <Text style={styles.infoAnswerLabel}>
-                      {estimated_time.text}
+                      {parseInt(estimated_time.text, 10)} мин.
                     </Text>
                   </View>
                   <View
@@ -557,7 +557,7 @@ class InfoScreen extends Component {
                           flex: 1
                         }}
                       >
-                        ОПЛАЧЕНА
+                        ОПЛАЧЕН
                       </Text>
                     ) : (
                       <Text style={styles.infoAnswerLabel}>

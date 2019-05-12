@@ -271,7 +271,7 @@ class HomeLists extends Component {
                             fontSize: 14
                           }}
                         >
-                          ОПЛАЧЕНА
+                          ОПЛАЧЕН
                         </Text>
                       ) : (
                         <Text
