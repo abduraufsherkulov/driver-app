@@ -81,7 +81,8 @@ class MyOrdersModal extends Component {
       const data = JSON.stringify({
         code: this.state.hash
       });
-
+      console.log(data);
+      console.log(this.state.token);
       const url = "https://api.delivera.uz/drivers/confirm-order";
 
       axios({
@@ -94,16 +95,18 @@ class MyOrdersModal extends Component {
         },
         headers: {
           "content-type": "application/json",
-          token: +this.state.token
+          token: this.state.token
         }
       })
         .then(response => {
+          console.log(response.data.status);
           if (response.data.status === "Success") {
             this.props.closed();
-            this.props.getFromRest();
             this.setState({
               loading: false
             });
+            this.props.nav.navigate("MyMainOrders");
+            this.props.getFromRest();
           } else if (response.data.status === "Fail") {
             this.setState({
               hash_valid: false,
