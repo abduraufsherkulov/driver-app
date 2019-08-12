@@ -308,7 +308,7 @@ class MaterialTopTabs extends React.Component {
         });
       })
       .catch(error => {
-        console.log(error.response, "error");
+        console.log(error, "error in orders refresh");
       });
   };
 
@@ -336,7 +336,7 @@ class MaterialTopTabs extends React.Component {
         });
       })
       .catch(error => {
-        console.log(error.response, "error");
+        console.log(error, "error refresh my-orders");
       });
   };
 
@@ -384,6 +384,7 @@ class MaterialTopTabs extends React.Component {
       });
 
     const urlMyOrders = "https://api.delivera.uz/drivers/my-orders";
+    // console.log(token);
     axios({
       method: "get",
       url: urlMyOrders,
@@ -397,6 +398,7 @@ class MaterialTopTabs extends React.Component {
       }
     })
       .then(response => {
+        // console.log(response);
         this.setState({
           myOrdersList: response.data.orders,
           refreshing: false
@@ -404,7 +406,7 @@ class MaterialTopTabs extends React.Component {
         // console.log(response.data.orders);
       })
       .catch(error => {
-        console.log(error, "error");
+        console.log(error, "error in loadtoaction my-orders");
       });
   };
   loadToMyOrders = async () => {
@@ -429,7 +431,7 @@ class MaterialTopTabs extends React.Component {
         // console.log(response.data.orders);
       })
       .catch(error => {
-        console.log(error, "error");
+        console.log(error, "error in loadtomyorders");
       });
   };
 

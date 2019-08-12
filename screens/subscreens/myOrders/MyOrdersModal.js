@@ -94,7 +94,7 @@ class MyOrdersModal extends Component {
         },
         headers: {
           "content-type": "application/json",
-          token: +this.state.token
+          token: this.state.token
         }
       })
         .then(response => {

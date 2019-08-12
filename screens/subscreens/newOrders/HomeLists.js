@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, PureComponent } from "react";
 
 import moment from "moment";
 import { Card, Tile, ListItem, Avatar, Input } from "react-native-elements";
@@ -13,7 +13,7 @@ import {
   DollarCoin
 } from "../../../assets/images/MainSvg";
 
-class HomeLists extends Component {
+class HomeLists extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {

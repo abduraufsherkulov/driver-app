@@ -72,19 +72,16 @@ class NewOrders extends React.Component {
     }
   };
   _renderItem = ({ item }) => (
-    <View style={styles.list}>
       <HomeLists
         handlePress={this.handlePress}
-        key={item.id}
         nav={this.props.navigation}
         allProps={item}
+        key={item.id}
         ready={this.addUp}
         finished={this.subtractDown}
         acceptNewOrder={this.props.screenProps.acceptNewOrder}
         getFromRest={this.props.screenProps.getFromRest}
       />
-      <Text />
-    </View>
   );
   _keyExtractor = (item, index) => item.id.toString();
   async componentDidMount() {
@@ -114,6 +111,11 @@ class NewOrders extends React.Component {
     },
     headerForceInset: { top: "never", bottom: "never" }
   });
+  getItemLayout = (data, index) => ({
+    length: 70,
+    offset: 70 * index,
+    index
+  })
   render() {
     let timeLeftText;
     if (this.state.ready === 0) {
@@ -184,11 +186,14 @@ class NewOrders extends React.Component {
                   </View>
                 </View>
                 <FlatList
+                  removeClippedSubviews={true}
                   data={this.props.screenProps.newOrdersList}
                   renderItem={this._renderItem}
                   keyExtractor={this._keyExtractor}
                   initialScrollIndex={0}
                   initialNumToRender={3}
+                  // getItemLayout={this.getItemLayout}
+                  onEndReachedThreshold={10}
                   ListFooterComponent={<View style={{ height: 30 }} />}
                   refreshControl={
                     <RefreshControl

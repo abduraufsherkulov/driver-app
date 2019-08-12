@@ -113,7 +113,7 @@ class MyInfoMapScreen extends Component {
 
   _pressCall = () => {
     let allVal = this.props.navigation.getParam("all");
-    const url = `tel://${allVal.user.phone}`;
+    const url = `tel:+${allVal.user.phone}`;
     Linking.openURL(url);
   };
 
