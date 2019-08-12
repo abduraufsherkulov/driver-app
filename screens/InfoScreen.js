@@ -326,7 +326,6 @@ class InfoScreen extends Component {
     }
     this._isMounted = false;
   }
-
   static navigationOptions = ({ navigation }) => ({
     headerTitle: (
       <InfoScreenTitle

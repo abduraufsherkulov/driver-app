@@ -111,8 +111,9 @@ class InfoScreen extends Component {
       const data = JSON.stringify({
         order_id: valProps.id
       });
+      console.log(data);
       const url = "https://api.delivera.uz/drivers/take";
-
+      console.log(this.state.token);
       axios({
         method: "post",
         url: url,
@@ -141,7 +142,7 @@ class InfoScreen extends Component {
           }
         })
         .catch(error => {
-          console.log(error.response);
+          console.log("ok", error);
         });
 
       event.preventDefault();
@@ -255,7 +256,8 @@ class InfoScreen extends Component {
     headerForceInset: { top: "never", bottom: "never" }
   });
   render() {
-    // console.log(this.props.navigation.state.routeName);
+    // console.log(this.props.getFromRest());
+    // console.log(this.props.navigation.state.params.getFromRest());
     let allVal = this.props.navigation.getParam("all");
     let text = "Waiting..";
     let { delivery_price, name, phone } = allVal.user;
@@ -570,9 +572,10 @@ class InfoScreen extends Component {
               openUp={this.state.opened}
               closed={this.handleClose}
               order_id={allVal.id}
+              nav={this.props.navigation}
               entity_name={allVal.entity.name}
               acceptNewOrder={this.props.acceptNewOrder}
-              getFromRest={this.props.getFromRest}
+              getFromRest={this.props.navigation.state.params.getFromRest}
               all={allVal}
             />
           </View>
