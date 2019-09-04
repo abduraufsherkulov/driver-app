@@ -11,7 +11,7 @@ import {
   ScrollView
 } from "react-native";
 
-import { Font } from "expo";
+import * as Font from 'expo-font';
 
 // import MainModal from "./subscreens/newOrders/MainModal";
 

@@ -12,7 +12,7 @@ import {
   Platform,
   RefreshControl
 } from "react-native";
-import { Font } from "expo";
+import * as Font from 'expo-font';
 
 import { SearchBar } from "react-native-elements";
 

@@ -11,16 +11,15 @@ import {
   BackHandler
 } from "react-native";
 import {
-  Constants,
   Location,
-  Permissions,
   MapView,
   IntentLauncherAndroid
 } from "expo";
-
+import * as Permissions from 'expo-permissions';
 import BottomDrawer from "rn-bottom-drawer";
-import { Font } from "expo";
+import * as Font from 'expo-font';
 import { Feather } from "@expo/vector-icons";
+import Constants from 'expo-constants';
 
 import MyOrdersModal from "./subscreens/myOrders/MyOrdersModal";
 import Polyline from "@mapbox/polyline";

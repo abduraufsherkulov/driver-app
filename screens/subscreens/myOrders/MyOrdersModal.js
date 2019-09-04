@@ -11,7 +11,7 @@ import { Button, Input } from "react-native-elements";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import axios from "axios";
 import Modal from "react-native-modal";
-import { Font } from "expo";
+import * as Font from 'expo-font';
 
 class MyOrdersModal extends Component {
   constructor(props) {

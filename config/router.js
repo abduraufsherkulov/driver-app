@@ -21,7 +21,7 @@ import InfoScreen from "../screens/InfoScreen";
 import MyInfoScreen from "../screens/MyInfoScreen";
 import MyInfoMapScreen from "../screens/MyInfoMapScreen";
 import MyItemsList from "../screens/subscreens/myOrders/MyItemsList";
-import { Font } from "expo";
+import * as Font from 'expo-font';
 import DummyInfoScreen from "../screens/DummyInfoScreen";
 
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";

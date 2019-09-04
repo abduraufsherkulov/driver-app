@@ -16,7 +16,7 @@ import axios from "axios";
 import HomeLists from "./newOrders/HomeLists";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Text } from "react-native-elements";
-import { Font } from "expo";
+import * as Font from 'expo-font';
 import SvgRender from "./SvgRender";
 import { NavigationLogo } from "../../assets/images/MainSvg";
 import { isLoaded } from "expo-font";

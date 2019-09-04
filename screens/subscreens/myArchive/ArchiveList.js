@@ -11,7 +11,7 @@ import {
   Input
 } from "react-native-elements";
 
-import { Font } from "expo";
+import * as Font from 'expo-font';
 
 class ArchiveList extends Component {
   constructor(props) {

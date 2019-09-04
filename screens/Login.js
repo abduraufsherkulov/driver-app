@@ -13,7 +13,10 @@ import {
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Input, Button } from "react-native-elements";
-import { Font, Permissions, Notifications, Svg } from "expo";
+import { Notifications } from "expo";
+import * as Permissions from 'expo-permissions';
+import * as Font from 'expo-font';
+import Constants from 'expo-constants';
 import axios from "axios";
 import { LoginLogo } from "../assets/images/MainSvg";
 const SCREEN_WIDTH = Dimensions.get("window").width;
@@ -168,7 +171,7 @@ export default class Login extends React.Component {
 
     // this._createNotificationAsync();
     if (Platform.OS === "android") {
-      Expo.Notifications.createChannelAndroidAsync("new", {
+      Notifications.createChannelAndroidAsync("new", {
         name: "Delivera Courier",
         priority: "max",
         vibrate: [0, 250, 250, 250],
@@ -176,7 +179,7 @@ export default class Login extends React.Component {
       });
     }
     if (Platform.OS === "android") {
-      Expo.Notifications.createChannelAndroidAsync("paid", {
+      Notifications.createChannelAndroidAsync("paid", {
         name: "Delivera Courier",
         priority: "max",
         vibrate: [0, 250, 250, 250],

@@ -13,8 +13,9 @@ import Navigator from "./config/router";
 import * as Animatable from "react-native-animatable";
 MyCustomComponent = Animatable.createAnimatableComponent(Image);
 
-import { Asset, AppLoading, SplashScreen, Constants, Font } from "expo";
-
+import { Asset, AppLoading, SplashScreen } from "expo";
+import * as Font from 'expo-font';
+import Constants from 'expo-constants';
 class App extends React.Component {
   state = {
     isSplashReady: false,

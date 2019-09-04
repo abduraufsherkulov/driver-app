@@ -11,14 +11,14 @@ import {
   AsyncStorage
 } from "react-native";
 import {
-  Constants,
   Location,
-  Permissions,
   MapView,
   IntentLauncherAndroid
 } from "expo";
+import Constants from 'expo-constants';
+import * as Font from 'expo-font';
 
-import { Font } from "expo";
+import * as Permissions from 'expo-permissions';
 
 import { EvilIcons } from "@expo/vector-icons";
 

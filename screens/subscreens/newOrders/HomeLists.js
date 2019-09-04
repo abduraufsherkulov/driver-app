@@ -4,7 +4,7 @@ import moment from "moment";
 import { Card, Tile, ListItem, Avatar, Input } from "react-native-elements";
 import { Text, View, StyleSheet, Image } from "react-native";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Font } from "expo";
+import * as Font from 'expo-font';
 import MainModal from "./MainModal";
 import TouchableScale from "react-native-touchable-scale";
 import {
