@@ -95,10 +95,10 @@ export default class Login extends React.Component {
     });
 
     const data = JSON.stringify({
-      // username: this.state.username,
-      // password: this.state.password,
-      username: "driver1",
-      password: "3618462",
+      // username: "driver1",
+      // password: "3618462",
+      username: this.state.username,
+      password: this.state.password,
       info: {
         platform: platform,
         app_version: app_version,
