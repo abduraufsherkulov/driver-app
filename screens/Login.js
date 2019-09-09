@@ -73,8 +73,8 @@ export default class Login extends React.Component {
       showLoading: false,
       platform: Platform.OS,
       app_version: Platform.Version,
-      device_info: Expo.Constants.deviceName,
-      device_uuid: Expo.Constants.installationId,
+      device_info: Constants.deviceName,
+      device_uuid: Constants.installationId,
       moveAnim: new Animated.Value(200)
     };
   }
@@ -148,17 +148,17 @@ export default class Login extends React.Component {
       });
     event.preventDefault();
   };
-  _createNotificationAsync = () => {
-    Expo.Notifications.presentLocalNotificationAsync({
-      title: "Reminder",
-      body: "This is an important reminder!!!!",
-      android: {
-        channelId: "new",
-        color: "#8ac53f",
-        icon: "../assets/notification_icon.png"
-      }
-    });
-  };
+  // _createNotificationAsync = () => {
+  //   Expo.Notifications.presentLocalNotificationAsync({
+  //     title: "Reminder",
+  //     body: "This is an important reminder!!!!",
+  //     android: {
+  //       channelId: "new",
+  //       color: "#8ac53f",
+  //       icon: "../assets/notification_icon.png"
+  //     }
+  //   });
+  // };
   async componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
