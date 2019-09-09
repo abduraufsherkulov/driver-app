@@ -10,11 +10,9 @@ import {
   Dimensions,
   AsyncStorage
 } from "react-native";
-import {
-  Location,
-  MapView,
-  IntentLauncherAndroid
-} from "expo";
+import MapView from 'react-native-maps';
+import * as IntentLauncher from 'expo-intent-launcher';
+import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 import BottomDrawer from "rn-bottom-drawer";
@@ -306,8 +304,8 @@ class InfoScreen extends Component {
       return;
     }
 
-    await IntentLauncherAndroid.startActivityAsync(
-      IntentLauncherAndroid.ACTION_LOCATION_SOURCE_SETTINGS
+    await IntentLauncher.startActivityAsync(
+      IntentLauncher.ACTION_LOCATION_SOURCE_SETTINGS
     );
     console.log("before");
   };

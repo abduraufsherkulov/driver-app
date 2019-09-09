@@ -73,8 +73,8 @@ export default class Login extends React.Component {
       showLoading: false,
       platform: Platform.OS,
       app_version: Platform.Version,
-      device_info: Expo.Constants.deviceName,
-      device_uuid: Expo.Constants.installationId,
+      device_info: Constants.deviceName,
+      device_uuid: Constants.installationId,
       moveAnim: new Animated.Value(200)
     };
   }
@@ -88,7 +88,7 @@ export default class Login extends React.Component {
       device_uuid,
       token
     } = this.state;
-
+    
     this.setState({
       showLoading: !showLoading,
       username_valid: true
@@ -107,7 +107,6 @@ export default class Login extends React.Component {
         push_token: token
       }
     });
-
     const url = "https://api.delivera.uz/drivers/login";
 
     axios({
@@ -121,6 +120,7 @@ export default class Login extends React.Component {
       headers: { "content-type": "application/json" }
     })
       .then(async response => {
+        console.log(response.data, 'here');
         if (response.status === 200) {
           if (response.data.status === "Fail") {
             this.setState({
@@ -140,11 +140,11 @@ export default class Login extends React.Component {
             this.props.navigation.navigate("App");
           }
         } else {
-          console.log(response, "unknown error");
+          console.log(response.data, "unknown error");
         }
       })
       .catch(function(error) {
-        console.log(error.response);
+        console.log(error.response, 'caught');
       });
     event.preventDefault();
   };
@@ -193,7 +193,6 @@ export default class Login extends React.Component {
       regular: require("../assets/fonts/GoogleSans-Regular.ttf"),
       bold: require("../assets/fonts/GoogleSans-Bold.ttf")
     });
-    console.log(token);
     this.setState({ fontLoaded: true, token: token });
   }
   _keyboardDidShow = () => {

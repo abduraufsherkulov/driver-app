@@ -10,11 +10,10 @@ import {
   Dimensions,
   AsyncStorage
 } from "react-native";
-import {
-  Location,
-  MapView,
-  IntentLauncherAndroid
-} from "expo";
+
+import MapView from 'react-native-maps';
+import * as IntentLauncher from 'expo-intent-launcher';
+import * as Location from 'expo-location';
 import Constants from 'expo-constants';
 import * as Font from 'expo-font';
 

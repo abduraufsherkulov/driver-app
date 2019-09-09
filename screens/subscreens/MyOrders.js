@@ -17,7 +17,8 @@ import axios from "axios";
 import MyOrdersList from "./myOrders/MyOrdersList";
 import { EvilIcons } from "@expo/vector-icons";
 import { Text } from "react-native-elements";
-import { Font } from "expo";
+
+import * as Font from 'expo-font';
 
 const isAndroid = Platform.OS === "android";
 
