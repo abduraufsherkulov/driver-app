@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "283117055270",
+    "firebase_url": "https://delivera-drivers.firebaseio.com",
+    "project_id": "delivera-drivers",
+    "storage_bucket": "delivera-drivers.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283117055270:android:350fdee087ba0bc2f7a5e7",
+        "android_client_info": {
+          "package_name": "drivers.delivera.uz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "283117055270-cgtaljak144rjlvalu4jc43ghrqe5vgg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4wVLMdB1Pl0ndL5_s6Hy8bpW4L8aDGwU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "283117055270-cgtaljak144rjlvalu4jc43ghrqe5vgg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

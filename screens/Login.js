@@ -23,6 +23,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 async function registerForPushNotificationsAsync() {
+  console.log('rend')
   const { status: existingStatus } = await Permissions.getAsync(
     Permissions.NOTIFICATIONS
   );
@@ -148,17 +149,17 @@ export default class Login extends React.Component {
       });
     event.preventDefault();
   };
-  _createNotificationAsync = () => {
-    Expo.Notifications.presentLocalNotificationAsync({
-      title: "Reminder",
-      body: "This is an important reminder!!!!",
-      android: {
-        channelId: "new",
-        color: "#8ac53f",
-        icon: "../assets/notification_icon.png"
-      }
-    });
-  };
+  // _createNotificationAsync = () => {
+  //   Expo.Notifications.presentLocalNotificationAsync({
+  //     title: "Reminder",
+  //     body: "This is an important reminder!!!!",
+  //     android: {
+  //       channelId: "new",
+  //       color: "#8ac53f",
+  //       icon: "../assets/notification_icon.png"
+  //     }
+  //   });
+  // };
   async componentDidMount() {
     this.keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
