@@ -28,6 +28,11 @@
     },
     "android": {
       "package": "drivers.delivera.uz",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCnORox7-WdWtkikXTZFyP7n5ls51nV1Y4"
+        }
+      },
       "versionCode": 1,
       "icon": "./assets/icon.png",
       "googleServicesFile": "./google-services.json",
