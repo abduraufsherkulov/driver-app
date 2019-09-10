@@ -32,7 +32,7 @@ class App extends React.Component {
     isAppReady: false,
 
     isLoadingComplete: false,
-    splashAnimation: new Animated.Value(0),
+    splashAnimation: new Animated.Value(0.01),
     splashAnimationComplete: false
   };
 
