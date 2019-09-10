@@ -9,7 +9,9 @@ import {
   Platform,
   Image,
   StatusBar,
-  Animated
+  Animated,
+  TextInput,
+  KeyboardAvoidingView
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Input, Button } from "react-native-elements";
@@ -65,6 +67,8 @@ async function registerForPushNotificationsAsync() {
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
+
+    // this.imageHeight = new Animated.Value(IMAGE_HEIGHT);
     this.state = {
       fontLoaded: false,
       username: "",
@@ -76,7 +80,6 @@ export default class Login extends React.Component {
       app_version: Platform.Version,
       device_info: Constants.deviceName,
       device_uuid: Constants.installationId,
-      moveAnim: new Animated.Value(200)
     };
   }
 
@@ -89,7 +92,7 @@ export default class Login extends React.Component {
       device_uuid,
       token
     } = this.state;
-    
+
     this.setState({
       showLoading: !showLoading,
       username_valid: true
@@ -144,7 +147,7 @@ export default class Login extends React.Component {
           console.log(response.data, "unknown error");
         }
       })
-      .catch(function(error) {
+      .catch(function (error) {
         console.log(error.response, 'caught');
       });
     event.preventDefault();
@@ -161,14 +164,6 @@ export default class Login extends React.Component {
   //   });
   // };
   async componentDidMount() {
-    this.keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      this._keyboardDidShow
-    );
-    this.keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      this._keyboardDidHide
-    );
 
     // this._createNotificationAsync();
     if (Platform.OS === "android") {
@@ -196,33 +191,6 @@ export default class Login extends React.Component {
     });
     this.setState({ fontLoaded: true, token: token });
   }
-  _keyboardDidShow = () => {
-    Animated.timing(
-      // Animate over time
-      this.state.moveAnim, // The animated value to drive
-      {
-        toValue: 20, // Animate to opacity: 1 (opaque)
-        duration: 1 // Make it take a while
-      }
-    ).start();
-    console.log(this.state.moveAnim);
-  };
-
-  _keyboardDidHide = () => {
-    Animated.timing(
-      // Animate over time
-      this.state.moveAnim, // The animated value to drive
-      {
-        toValue: 200, // Animate to opacity: 1 (opaque)
-        duration: 1 // Make it take a while
-      }
-    ).start();
-    console.log(this.state.moveAnim);
-  };
-  componentWillUnmount() {
-    this.keyboardDidShowListener.remove();
-    this.keyboardDidHideListener.remove();
-  }
   render() {
     const {
       username,
@@ -234,17 +202,21 @@ export default class Login extends React.Component {
     return (
       <View style={styles.container}>
         {this.state.fontLoaded ? (
-          <Animated.View
+          <KeyboardAvoidingView
+            // style={styles.container}
+            behavior="height"
+
             style={{
               backgroundColor: "transparent",
-              width: 280,
-              height: 300,
-              position: "absolute",
-              bottom: moveAnim
+              display: 'flex',
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center'
             }}
+            enabled
           >
             <View style={styles.loginInput}>
-              <View style={{ marginBottom: 40 }}>
+              <View style={{ marginBottom: 40, textAlign: 'center', alignSelf:'center' }}>
                 <LoginLogo />
               </View>
               {/* <Image source={BG_IMAGE} style={{ marginBottom: 40 }} /> */}
@@ -286,6 +258,8 @@ export default class Login extends React.Component {
                     : "Пожалуйста введите действительное имя пользователя"
                 }
                 placeholderTextColor="#494949"
+                
+                scrollEnabled={false}
               />
               <Input
                 leftIcon={<FontAwesome name="lock" color="#5caa57" size={25} />}
@@ -317,6 +291,7 @@ export default class Login extends React.Component {
                 ref={input => (this.passwordInput = input)}
                 blurOnSubmit={true}
                 placeholderTextColor="#494949"
+                scrollEnabled={false}
               />
 
               <Button
@@ -338,17 +313,17 @@ export default class Login extends React.Component {
                 }}
               />
             </View>
-          </Animated.View>
+          </KeyboardAvoidingView>
         ) : (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <Image
-              style={{ width: 100, height: 100 }}
-              source={require("../assets/loader.gif")}
-            />
-          </View>
-        )}
+            <View
+              style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            >
+              <Image
+                style={{ width: 100, height: 100 }}
+                source={require("../assets/loader.gif")}
+              />
+            </View>
+          )}
       </View>
     );
   }
@@ -369,15 +344,13 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     width: 280,
     height: 300,
-    position: "absolute",
-    bottom: 200
-  },
-  loginTitle: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center"
   },
   loginInput: {
+    width: 280,
+    height: 300,
+    textAlign: "center"
+  },
+  loginTitle: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center"
