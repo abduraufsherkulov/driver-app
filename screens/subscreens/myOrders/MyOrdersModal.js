@@ -79,7 +79,7 @@ class MyOrdersModal extends Component {
       event.preventDefault();
     } else {
       const data = JSON.stringify({
-        code: this.state.hash
+        code: this.props.order_id
       });
       console.log(data);
       console.log(this.state.token);
@@ -99,7 +99,6 @@ class MyOrdersModal extends Component {
         }
       })
         .then(response => {
-          console.log(response.data.status);
           if (response.data.status === "Success") {
             this.props.closed();
             this.setState({
@@ -189,7 +188,7 @@ class MyOrdersModal extends Component {
           {this.state.fontLoaded ? (
             <React.Fragment>
               {text_ask}
-              {confirm_input}
+              {/* {confirm_input} */}
               <View
                 style={{
                   flexDirection: "row",
