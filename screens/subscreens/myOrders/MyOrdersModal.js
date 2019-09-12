@@ -99,7 +99,6 @@ class MyOrdersModal extends Component {
         }
       })
         .then(response => {
-          console.log(response.data.status);
           if (response.data.status === "Success") {
             this.props.closed();
             this.setState({
@@ -162,7 +161,7 @@ class MyOrdersModal extends Component {
           {this.state.fontLoaded ? (
             <React.Fragment>
               {text_ask}
-              {confirm_input}
+              {/* {confirm_input} */}
               <View
                 style={{
                   flexDirection: "row",
