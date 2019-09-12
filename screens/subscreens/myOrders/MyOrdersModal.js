@@ -79,7 +79,7 @@ class MyOrdersModal extends Component {
       event.preventDefault();
     } else {
       const data = JSON.stringify({
-        code: this.state.hash
+        order_id: this.props.order_id
       });
       console.log(data);
       console.log(this.state.token);
@@ -125,34 +125,7 @@ class MyOrdersModal extends Component {
     const { hash, hash_valid } = this.state;
     let code = this.props.all.status.code;
     let confirm_input =
-      code === "on_way" ? (
-        <Input
-          leftIcon={
-            <FontAwesome
-              name="qrcode"
-              color="rgba(171, 189, 219, 1)"
-              size={25}
-            />
-          }
-          containerStyle={{ marginVertical: 10 }}
-          onChangeText={hash => this.setState({ hash })}
-          value={hash}
-          inputStyle={{ marginLeft: 10, color: "rgba(47,44,60,1)" }}
-          keyboardAppearance="light"
-          keyboardType="numeric"
-          placeholder="Код"
-          autoFocus={false}
-          autoCapitalize="none"
-          autoCorrect={false}
-          returnKeyType="next"
-          blurOnSubmit={false}
-          placeholderTextColor="rgba(126,123,138,1)"
-          errorStyle={{ textAlign: "center", fontSize: 12 }}
-          errorMessage={
-            hash_valid ? null : "Пожалуйста, введите правильный код"
-          }
-        />
-      ) : null;
+      code === "on_way" ? null : null;
     let text_ask =
       code === "in_process" ? (
         <Text style={{ fontSize: 20 }}>

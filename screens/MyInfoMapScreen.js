@@ -311,7 +311,7 @@ class MyInfoMapScreen extends Component {
       region: {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        latitudeDelta: 0.1,
+        latitudeDelta: 0.001,
         longitudeDelta: 0.05
       },
       asyncing: true
