@@ -150,7 +150,7 @@ class MyItemsList extends Component {
     let allVal = this.props.navigation.getParam("all");
     let nav = this.props.navigation.getParam("nav");
     let getFromRest = this.props.navigation.getParam("getFromRest");
-    console.log(this.state.items);
+    // console.log(this.state.items);
     let listProducts = this.state.fontLoaded
       ? allVal.items.map((l, i) => (
           <View key={l.food_id}>

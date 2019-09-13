@@ -81,8 +81,8 @@ class MyOrdersModal extends Component {
       const data = JSON.stringify({
         order_id: this.props.order_id
       });
-      console.log(data);
-      console.log(this.state.token);
+      // console.log(data);
+      // console.log(this.state.token);
       const url = "https://api.delivera.uz/drivers/confirm-order";
 
       axios({

@@ -34,7 +34,7 @@ class MainModal extends Component {
     const data = JSON.stringify({
       order_id: this.props.order_id
     });
-    console.log(data);
+    // console.log(data);
     const url = "https://api.delivera.uz/drivers/accept";
 
     axios({
@@ -51,7 +51,7 @@ class MainModal extends Component {
       }
     })
       .then(response => {
-        console.log(response.data);
+        // console.log(response.data);
         if (response.data.reason === "Accepted") {
           this.props.closed();
           this.props.acceptNewOrder();

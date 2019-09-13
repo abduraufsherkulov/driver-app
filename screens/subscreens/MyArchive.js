@@ -1,6 +1,5 @@
 import React from "react";
 import { SafeAreaView } from "react-navigation";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import moment from "moment";
 import {
   AsyncStorage,

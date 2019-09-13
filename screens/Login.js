@@ -25,7 +25,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const SCREEN_HEIGHT = Dimensions.get("window").height;
 
 async function registerForPushNotificationsAsync() {
-  console.log('rend')
+  // console.log('rend')
   const { status: existingStatus } = await Permissions.getAsync(
     Permissions.NOTIFICATIONS
   );
@@ -124,7 +124,7 @@ export default class Login extends React.Component {
       headers: { "content-type": "application/json" }
     })
       .then(async response => {
-        console.log(response.data, 'here');
+        // console.log(response.data, 'here');
         if (response.status === 200) {
           if (response.data.status === "Fail") {
             this.setState({

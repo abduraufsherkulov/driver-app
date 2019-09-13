@@ -56,7 +56,7 @@ class Home extends React.Component {
 
   handlePress = () => console.log("this is an example method");
   render() {
-    console.log(this.state.orders);
+    // console.log(this.state.orders);
     return (
       <ScrollView>
         <View style={styles.list}>
