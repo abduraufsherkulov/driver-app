@@ -237,7 +237,7 @@ class MyOrdersList extends Component {
                           fontSize: 14
                         }}
                       >
-                        {this.props.allProps.user.delivery_price} сум
+                        {this.props.allProps.user.delivery_price.toFixed()} сум
                       </Text>
                     </View>
                     <View

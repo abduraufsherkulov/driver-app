@@ -422,7 +422,7 @@ class InfoScreen extends Component {
                 >
                   <Text style={styles.infoTypeLabel}>Стоимость доставки</Text>
                   <Text style={styles.infoAnswerLabel}>
-                    {delivery_price} Сум
+                    {delivery_price.toFixed()} Сум
                   </Text>
                 </View>
                 <View
@@ -448,7 +448,7 @@ class InfoScreen extends Component {
                     </Text>
                   ) : (
                     <Text style={styles.infoAnswerLabel}>
-                      {delivery_price} сум
+                      {allVal.totalPrice} сум
                     </Text>
                   )}
                 </View>

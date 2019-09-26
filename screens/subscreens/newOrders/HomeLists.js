@@ -254,7 +254,7 @@ class HomeLists extends PureComponent {
                           fontSize: 14
                         }}
                       >
-                        {this.props.allProps.user.delivery_price} сум
+                        {this.props.allProps.user.delivery_price.toFixed(0)} сум
                       </Text>
                     </View>
                     <View
@@ -274,34 +274,34 @@ class HomeLists extends PureComponent {
                           ОПЛАЧЕН
                         </Text>
                       ) : (
-                        <Text
-                          style={{
-                            fontFamily: "bold",
-                            color: "gray",
-                            fontSize: 14
-                          }}
-                        >
-                          {this.props.allProps.totalPrice} сум
+                          <Text
+                            style={{
+                              fontFamily: "bold",
+                              color: "gray",
+                              fontSize: 14
+                            }}
+                          >
+                            {this.props.allProps.totalPrice} сум
                         </Text>
-                      )}
+                        )}
                     </View>
                   </View>
                 </View>
               }
-              // subtitle={
-              // }
+            // subtitle={
+            // }
             />
           </View>
         ) : (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <Image
-              style={{ width: 100, height: 100 }}
-              source={require("../../../assets/loader.gif")}
-            />
-          </View>
-        )}
+            <View
+              style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            >
+              <Image
+                style={{ width: 100, height: 100 }}
+                source={require("../../../assets/loader.gif")}
+              />
+            </View>
+          )}
       </React.Fragment>
     );
   }

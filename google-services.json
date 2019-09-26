@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "283117055270-a9efm1tjs58dhtclpaafeetvvt4d7l9p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "drivers.delivera.uz",
+            "certificate_hash": "8b6165ac189635f6d4747bb689c1a1d56627b4ed"
+          }
+        },
+        {
           "client_id": "283117055270-cgtaljak144rjlvalu4jc43ghrqe5vgg.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -504,7 +504,7 @@ class InfoScreen extends Component {
                       </Text>
                     ) : (
                       <Text style={styles.infoAnswerLabel}>
-                        {delivery_price} сум
+                        {delivery_price.toFixed()} сум
                       </Text>
                     )}
                   </View>

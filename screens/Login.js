@@ -111,6 +111,7 @@ export default class Login extends React.Component {
         push_token: token
       }
     });
+    // console.log(data);
     const url = "https://api.delivera.uz/drivers/login";
 
     axios({
@@ -184,7 +185,7 @@ export default class Login extends React.Component {
     }
     registerForPushNotificationsAsync();
     let token = await Notifications.getExpoPushTokenAsync();
-
+    // console.log(token);
     await Font.loadAsync({
       regular: require("../assets/fonts/GoogleSans-Regular.ttf"),
       bold: require("../assets/fonts/GoogleSans-Bold.ttf")
