@@ -77,9 +77,13 @@ class DummyInfoScreen extends Component {
       fontLoaded: false,
       opened: false,
       region: {
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: 0.1,
+        latitude: +this.props.navigation.getParam("all").user.latitude,
+        longitude: +this.props.navigation.getParam("all").user.longitude
+      },
+      delta: {
+        latitude: +this.props.navigation.getParam("all").user.latitude,
+        longitude: +this.props.navigation.getParam("all").user.longitude,
+        latitudeDelta: 0.001,
         longitudeDelta: 0.05
       },
       asyncing: false,
@@ -159,7 +163,7 @@ class DummyInfoScreen extends Component {
       if (providerStatusSecond.locationServicesEnabled === true) {
         await Location.getCurrentPositionAsync({
           enableHighAccuracy: true
-        }).then(this.locationChanged);
+        }).then();
 
         let driverLat = this.state.location.coords.latitude;
         let driverLong = this.state.location.coords.longitude;
@@ -229,27 +233,18 @@ class DummyInfoScreen extends Component {
               console.log(error);
             });
 
-          this.locationPromise = await Location.watchPositionAsync(
-            {
-              enableHighAccuracy: true,
-              timeInterval: 2000
-            },
-            this.locationChanged
-          );
         }
       } else {
         this.setState({
           region: {
             latitude: lat,
-            longitude: long,
-            latitudeDelta: 0.1,
-            longitudeDelta: 0.05
+            longitude: long
           }
         });
       }
     } else {
       await Location.getCurrentPositionAsync({ enableHighAccuracy: true }).then(
-        this.locationChanged
+
       );
 
       let driverLat = this.state.location.coords.latitude;
@@ -287,13 +282,6 @@ class DummyInfoScreen extends Component {
             console.log(error);
           });
 
-        this.locationPromise = await Location.watchPositionAsync(
-          {
-            enableHighAccuracy: true,
-            timeInterval: 2000
-          },
-          this.locationChanged
-        );
       } else {
         const myUrl = `https://maps.googleapis.com/maps/api/directions/json?origin=${lat},${long}&destination=${userLat},${userLong}&mode=driving&units=metric&alternatives=false&key=AIzaSyAzYOL6bw06c3P1Tq3aZoXH34RviHjyAro`;
         axios({
@@ -325,14 +313,6 @@ class DummyInfoScreen extends Component {
           .catch(error => {
             console.log(error);
           });
-
-        this.locationPromise = await Location.watchPositionAsync(
-          {
-            enableHighAccuracy: true,
-            timeInterval: 2000
-          },
-          this.locationChanged
-        );
       }
     }
   };
@@ -428,11 +408,17 @@ class DummyInfoScreen extends Component {
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421
               }}
+              region={{
+                latitude: this.state.delta.latitude,
+                longitude: this.state.delta.longitude,
+                latitudeDelta: this.state.delta.latitudeDelta,
+                longitudeDelta: this.state.delta.longitudeDelta
+              }}
               showsUserLocation={true}
-              region={this.state.region}
-              // onLayout={() => {
-              //   this.mark.showCallout();
-              // }}
+            // region={this.state.region}
+            // onLayout={() => {
+            //   this.mark.showCallout();
+            // }}
             >
               <MapView.Marker
                 // ref={ref => {
@@ -444,7 +430,7 @@ class DummyInfoScreen extends Component {
                   longitude: +allVal.entity.longitude
                 }}
                 title={allVal.entity.name}
-                //description={text}
+              //description={text}
               />
               <MapView.Marker
                 // ref={ref => {
@@ -458,7 +444,7 @@ class DummyInfoScreen extends Component {
                 title={
                   allVal.user.name.first_name + " " + allVal.user.name.last_name
                 }
-                //description={text}
+              //description={text}
               />
               {polygam}
             </MapView>
@@ -468,7 +454,7 @@ class DummyInfoScreen extends Component {
               containerHeight={300}
               offset={80}
               startUp={false}
-              // downDisplay={240}
+            // downDisplay={240}
             >
               <View style={{ flex: 1, marginTop: 2 }}>
                 <View style={{ flex: 0.08, justifyContent: "center" }}>
@@ -572,12 +558,12 @@ class DummyInfoScreen extends Component {
             </BottomDrawer>
           </View>
         ) : (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <Button title="log out" onPress={this._signOutAsync} />
-          </View>
-        )}
+            <View
+              style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            >
+              <Button title="log out" onPress={this._signOutAsync} />
+            </View>
+          )}
       </View>
     );
   }

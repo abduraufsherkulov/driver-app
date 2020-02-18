@@ -237,9 +237,7 @@ class MyInfoMapScreen extends Component {
         this.setState({
           region: {
             latitude: lat,
-            longitude: long,
-            latitudeDelta: 0.1,
-            longitudeDelta: 0.05
+            longitude: long
           }
         });
       }
@@ -311,8 +309,8 @@ class MyInfoMapScreen extends Component {
       region: {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        latitudeDelta: 0.001,
-        longitudeDelta: 0.05
+        latitudeDelta: this.state.region.latitudeDelta,
+        longitudeDelta: this.state.region.longitudeDelta
       },
       asyncing: true
     });
@@ -367,6 +365,16 @@ class MyInfoMapScreen extends Component {
     },
     headerForceInset: { top: "never", bottom: "never" }
   });
+  onRegionChange = (delta) => {
+    this.setState({
+      region: {
+        latitude: this.state.latitude,
+        longitude: this.state.longitude,
+        latitudeDelta: delta.latitudeDelta,
+        longitudeDelta: delta.longitudeDelta
+      }
+    });
+  }
 
   render() {
     let allVal = this.props.navigation.getParam("all");
@@ -401,9 +409,10 @@ class MyInfoMapScreen extends Component {
               }}
               showsUserLocation={true}
               region={this.state.region}
-              // onLayout={() => {
-              //   this.mark.showCallout();
-              // }}
+              onRegionChangeComplete={this.onRegionChange}
+            // onLayout={() => {
+            //   this.mark.showCallout();
+            // }}
             >
               <MapView.Marker
                 // ref={ref => {
@@ -415,7 +424,7 @@ class MyInfoMapScreen extends Component {
                   longitude: +allVal.entity.longitude
                 }}
                 title={allVal.entity.name}
-                //description={text}
+              //description={text}
               >
                 <Image
                   style={{ width: 38, height: 38 }}
@@ -434,7 +443,7 @@ class MyInfoMapScreen extends Component {
                 title={
                   allVal.user.name.first_name + " " + allVal.user.name.last_name
                 }
-                //description={text}
+              //description={text}
               >
                 <Image
                   style={{ width: 38, height: 38 }}
@@ -445,15 +454,15 @@ class MyInfoMapScreen extends Component {
             </MapView>
           </View>
         ) : (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <Image
-              style={{ width: 100, height: 100 }}
-              source={require("../assets/loader.gif")}
-            />
-          </View>
-        )}
+            <View
+              style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            >
+              <Image
+                style={{ width: 100, height: 100 }}
+                source={require("../assets/loader.gif")}
+              />
+            </View>
+          )}
       </View>
     );
   }

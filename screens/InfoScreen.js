@@ -83,9 +83,13 @@ class InfoScreen extends Component {
       fontLoaded: false,
       opened: false,
       region: {
-        latitude: 0,
-        longitude: 0,
-        latitudeDelta: 0.1,
+        latitude: +this.props.navigation.getParam("all").user.latitude,
+        longitude: +this.props.navigation.getParam("all").user.longitude
+      },
+      delta: {
+        latitude: +this.props.navigation.getParam("all").user.latitude,
+        longitude: +this.props.navigation.getParam("all").user.longitude,
+        latitudeDelta: 0.001,
         longitudeDelta: 0.05
       },
       asyncing: false,
@@ -221,7 +225,7 @@ class InfoScreen extends Component {
         console.log('top');
         await Location.getCurrentPositionAsync({
           enableHighAccuracy: true
-        }).then(this.locationChanged);
+        }).then();
 
         let driverLat = this.state.location.coords.latitude;
         let driverLong = this.state.location.coords.longitude;
@@ -243,15 +247,13 @@ class InfoScreen extends Component {
             enableHighAccuracy: true,
             timeInterval: 2000
           },
-          this.locationChanged
+          
         );
       } else {
         this.setState({
           region: {
             latitude: lat,
-            longitude: long,
-            latitudeDelta: 0.1,
-            longitudeDelta: 0.05
+            longitude: long
           }
         });
       }
@@ -259,7 +261,7 @@ class InfoScreen extends Component {
       console.log('bottom');
       await Location.getCurrentPositionAsync({
         enableHighAccuracy: true
-      }).then(this.locationChanged);
+      }).then();
 
       let driverLat = this.state.location.coords.latitude;
       let driverLong = this.state.location.coords.longitude;
@@ -280,7 +282,7 @@ class InfoScreen extends Component {
           enableHighAccuracy: true,
           timeInterval: 2000
         },
-        this.locationChanged
+        
       );
     }
   };
@@ -292,8 +294,6 @@ class InfoScreen extends Component {
       region: {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        latitudeDelta: 0.001,
-        longitudeDelta: 0.05
       },
       asyncing: true
     });
@@ -344,9 +344,8 @@ class InfoScreen extends Component {
     },
     headerForceInset: { top: "never", bottom: "never" }
   });
-  onRegionChange =(region)=> {
-    console.log(region);
-    this.setState({ region });
+  onRegionChange = (delta) => {
+    this.setState({ delta });
   }
   render() {
     // console.log(this.props.navigation.state.routeName);
@@ -379,6 +378,7 @@ class InfoScreen extends Component {
         />
       );
     }
+    console.log(this.state.delta)
     return (
       <View style={{ flex: 1 }}>
         {this.state.fontLoaded ? (
@@ -386,8 +386,16 @@ class InfoScreen extends Component {
             <MapView
               style={{ flex: 1 }}
               showsUserLocation={true}
-              region={this.state.region}
+              // onRegionChangeComplete={this.onRegionChange}
+              region={{
+                latitude: this.state.delta.latitude,
+                longitude: this.state.delta.longitude,
+                latitudeDelta: this.state.delta.latitudeDelta,
+                longitudeDelta: this.state.delta.longitudeDelta
+              }}
             >
+              {/* latitudeDelta: 0.001,
+            longitudeDelta: 0.05 */}
               <MapView.Marker
                 // image={require("../assets/images/restraunt.png")}
                 coordinate={{
@@ -503,10 +511,10 @@ class InfoScreen extends Component {
                         ОПЛАЧЕН
                       </Text>
                     ) : (
-                      <Text style={styles.infoAnswerLabel}>
-                        {delivery_price.toFixed()} сум
+                        <Text style={styles.infoAnswerLabel}>
+                          {delivery_price.toFixed()} сум
                       </Text>
-                    )}
+                      )}
                   </View>
                   <View
                     style={{
@@ -573,15 +581,15 @@ class InfoScreen extends Component {
             />
           </View>
         ) : (
-          <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-          >
-            <Image
-              style={{ width: 100, height: 100 }}
-              source={require("../assets/loader.gif")}
-            />
-          </View>
-        )}
+            <View
+              style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            >
+              <Image
+                style={{ width: 100, height: 100 }}
+                source={require("../assets/loader.gif")}
+              />
+            </View>
+          )}
       </View>
     );
   }
